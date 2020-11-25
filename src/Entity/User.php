@@ -43,6 +43,31 @@ class User implements \JsonSerializable, UserInterface
      */
     private $apiToken;
 
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $isVerified;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $firstName;
+
+    /**
+     * @ORM\Column(type="date", nullable=true)
+     */
+    private $lastLogin;
+
+    /**
+     * @ORM\Column(type="date", nullable=true)
+     */
+    private $dateReg;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $avatar;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -133,6 +158,66 @@ class User implements \JsonSerializable, UserInterface
         return $this;
     }
 
+    public function getIsVerified(): ?bool
+    {
+        return $this->isVerified;
+    }
+
+    public function setIsVerified(bool $isVerified): self
+    {
+        $this->isVerified = $isVerified;
+
+        return $this;
+    }
+
+    public function getFirstName(): ?string
+    {
+        return $this->firstName;
+    }
+
+    public function setFirstName(?string $firstName): self
+    {
+        $this->firstName = $firstName;
+
+        return $this;
+    }
+
+    public function getLastLogin(): ?\DateTimeInterface
+    {
+        return $this->lastLogin;
+    }
+
+    public function setLastLogin(?\DateTimeInterface $lastLogin): self
+    {
+        $this->lastLogin = $lastLogin;
+
+        return $this;
+    }
+
+    public function getDateReg(): ?\DateTimeInterface
+    {
+        return $this->dateReg;
+    }
+
+    public function setDateReg(?\DateTimeInterface $dateReg): self
+    {
+        $this->dateReg = $dateReg;
+
+        return $this;
+    }
+
+    public function getAvatar(): ?string
+    {
+        return $this->avatar;
+    }
+
+    public function setAvatar(?string $avatar): self
+    {
+        $this->avatar = $avatar;
+
+        return $this;
+    }
+
     /**
      * Specify data which should be serialized to JSON
      * @link https://php.net/manual/en/jsonserializable.jsonserialize.php
@@ -145,7 +230,10 @@ class User implements \JsonSerializable, UserInterface
         return array(
             "id" => $this->getId(),
             "phone" => $this->getPhone(),
-            "apiToken" => $this->getApiToken()
+            "roles" => $this->getRoles(),
+            "apiToken" => $this->getApiToken(),
+            "firstName" => $this->getFirstName(),
+            "avatar" => $this->getAvatar()
         );
     }
 }

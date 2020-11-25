@@ -22,6 +22,6 @@ class MainController extends AbstractController
      */
     public function tokentest()
     {
-        return new JsonResponse('good');
+        return new JsonResponse($this->getUser());
     }
 }

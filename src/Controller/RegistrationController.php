@@ -8,7 +8,6 @@ use App\Security\TokenAuthenticator;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-//use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Security\Guard\GuardAuthenticatorHandler;
@@ -22,8 +21,6 @@ class RegistrationController extends AbstractController
     {
         $data = json_decode($request->getContent(), true);
         $user = new User();
-        $form = $this->createForm(RegistrationFormType::class, $user);
-        $form->handleRequest($request);
 
         $user->setPhone($data['phone']);
         $user->setPassword(
@@ -32,10 +29,12 @@ class RegistrationController extends AbstractController
                 $data['password']
             )
         );
+        $user->setIsVerified(false);
+        $user->setDateReg(new \DateTime());
 
-        $entityManager = $this->getDoctrine()->getManager();
-        $entityManager->persist($user);
-        $entityManager->flush();
+        $em = $this->getDoctrine()->getManager();
+        $em->persist($user);
+        $em->flush();
 
         return new JsonResponse($user);
     }

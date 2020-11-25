@@ -30,31 +30,25 @@ class SecurityController extends AbstractController
 
             $user = $em->getRepository(User::class)->findOneBy(['phone' => $data['phone']]);
 
+            # Check User
             if(!$user) {
                 return new JsonResponse('User does not exist');
             }
 
-            // Check Password
+            # Check Password
             if (!$passwordEncoder->isPasswordValid($user, $data['password'])) {
                 return new JsonResponse('Password incorrect');
             }
 
-            // Create new API key (token)
+            # Create new API key (token)
             $token = bin2hex(random_bytes(16));
             $user->setApiToken($token);
-//            $user->setLastLogin(new \DateTime());
+            $user->setLastLogin(new \DateTime());
 
             $em->persist($user);
-
             $em->flush();
 
             return new JsonResponse($user->getApiToken());
-//            return new JsonResponse($guardHandler->authenticateUserAndHandleSuccess(
-//                $user,
-//                $request,
-//                $authenticator,
-//                'api' // firewall name in security.yaml
-//            ));
 
         } catch (\Exception $e) {
             return new JsonResponse(array(
