@@ -5,13 +5,15 @@ namespace App\Entity;
 use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
+use phpDocumentor\Reflection\Types\Integer;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
 use JMS\Serializer\Annotation as JMS;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
- * @UniqueEntity(fields={"apiToken"}, message="There is already an account with this apiToken")
+ * @UniqueEntity(fields="phone")
  */
 class User implements \JsonSerializable, UserInterface
 {
@@ -24,6 +26,8 @@ class User implements \JsonSerializable, UserInterface
 
     /**
      * @ORM\Column(type="string", length=180, unique=true)
+     * @Assert\NotBlank
+     * @Assert\Regex("/^[1-9]\d{11}$|^[1-9]\d{11}$/")
      */
     private $phone;
 
@@ -35,6 +39,8 @@ class User implements \JsonSerializable, UserInterface
     /**
      * @var string The hashed password
      * @ORM\Column(type="string")
+     * @Assert\NotNull
+     * @Assert\Length(min=6,max=100)
      */
     private $password;
 
@@ -67,6 +73,13 @@ class User implements \JsonSerializable, UserInterface
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $avatar;
+
+    /**
+     * @ORM\Column(type="integer")
+     * @Assert\NotBlank
+     * @Assert\Type("integer")
+     */
+    private $countryCode;
 
     public function getId(): ?int
     {
@@ -218,6 +231,18 @@ class User implements \JsonSerializable, UserInterface
         return $this;
     }
 
+    public function getCountryCode(): ?int
+    {
+        return $this->countryCode;
+    }
+
+    public function setCountryCode(?int $countryCode): self
+    {
+        $this->countryCode = $countryCode;
+
+        return $this;
+    }
+
     /**
      * Specify data which should be serialized to JSON
      * @link https://php.net/manual/en/jsonserializable.jsonserialize.php
@@ -233,7 +258,8 @@ class User implements \JsonSerializable, UserInterface
             "roles" => $this->getRoles(),
             "apiToken" => $this->getApiToken(),
             "firstName" => $this->getFirstName(),
-            "avatar" => $this->getAvatar()
+            "avatar" => $this->getAvatar(),
+            "countryCode" => $this->getCountryCode()
         );
     }
 }
