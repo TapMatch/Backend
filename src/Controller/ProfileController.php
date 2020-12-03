@@ -9,36 +9,35 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Doctrine\ORM\EntityManagerInterface;
 
 class ProfileController extends AbstractController
 {
+    private $em;
+    private $rep;
+
     /**
-     * @Route("/api/profile/set-name", methods={"POST"})
+     * ProfileController constructor.
+     * @param EntityManagerInterface $entityManager
      */
-    public function setName(Request $request): Response
+    public function __construct(EntityManagerInterface $entityManager)
     {
-        $data = json_decode($request->getContent(), true);
-        $em = $this->getDoctrine()->getManager();
-        $user = $em->getRepository(User::class)->findOneBy(['apiToken' => $this->getUser()->getApiToken()]);
-
-        $user->setFirstName($data['name']);
-
-        $em->persist($user);
-        $em->flush();
-
-        return new JsonResponse($user);
+        $this->em = $entityManager;
+        $this->rep = $entityManager->getRepository(User::class);
     }
 
     /**
-     * @Route("/api/profile/set-avatar", methods={"POST"})
+     * @Route("/api/profile/{id}/avatar", methods={"PUT"})
+     * @param Request $request
+     * @param $id
+     * @return Response
      */
-    public function setAvatar(Request $request): Response
+    public function setAvatar(Request $request, $id): Response
     {
         $file = $request->files->get('photo');
         $validFormat = array('jpg', 'JPG', 'jpeg', 'JPEG', 'png', 'PNG');
-        $em = $this->getDoctrine()->getManager();
 
-        $user = $em->getRepository(User::class)->findOneBy(['apiToken' => $this->getUser()->getApiToken()]);
+        $user = $this->rep->findOneBy(['apiToken' => $this->getUser()->getApiToken()]);
 
         if(!empty($file)) {
             $fileFormat = $file->getClientOriginalExtension();
@@ -52,8 +51,8 @@ class ProfileController extends AbstractController
 
                 $user->setAvatar($fileNewName);
 
-                $em->persist($user);
-                $em->flush();
+                $this->em->persist($user);
+                $this->em->flush();
             } else {
                 return new JsonResponse('file is no valid');
             }
@@ -62,5 +61,26 @@ class ProfileController extends AbstractController
         }
 
         return new JsonResponse('file is empty');
+    }
+
+    /**
+     * @Route("/profile/{id}", methods={"PUT"})
+     * @param Request $request
+     * @param User $id
+     * @return JsonResponse
+     */
+    public function updateProfile(Request $request, $id)
+    {
+        $data = json_decode($request->getContent(), true);
+        $user = $this->rep->find($id);
+        $user->setData($data);
+
+        $this->em->persist($user);
+        $this->em->flush();
+
+        return new JsonResponse([
+            'message' => 'success',
+            'status' => 200
+        ]);
     }
 }

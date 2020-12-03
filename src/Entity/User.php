@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use phpDocumentor\Reflection\Types\Integer;
@@ -15,7 +16,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Entity(repositoryClass=UserRepository::class)
  * @UniqueEntity(fields="phone")
  */
-class User implements \JsonSerializable, UserInterface
+class User implements UserInterface
 {
     /**
      * @ORM\Id
@@ -27,7 +28,7 @@ class User implements \JsonSerializable, UserInterface
     /**
      * @ORM\Column(type="string", length=180, unique=true)
      * @Assert\NotBlank
-     * @Assert\Regex("/^[1-9]\d{11}$|^[1-9]\d{11}$/")
+     * @Assert\Regex("/^\+[1-9]\d{1,14}$/")
      */
     private $phone;
 
@@ -38,9 +39,6 @@ class User implements \JsonSerializable, UserInterface
 
     /**
      * @var string The hashed password
-     * @ORM\Column(type="string")
-     * @Assert\NotNull
-     * @Assert\Length(min=6,max=100)
      */
     private $password;
 
@@ -48,11 +46,6 @@ class User implements \JsonSerializable, UserInterface
      * @ORM\Column(type="string", unique=true, nullable=true)
      */
     private $apiToken;
-
-    /**
-     * @ORM\Column(type="boolean")
-     */
-    private $isVerified;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
@@ -76,10 +69,30 @@ class User implements \JsonSerializable, UserInterface
 
     /**
      * @ORM\Column(type="integer")
-     * @Assert\NotBlank
      * @Assert\Type("integer")
      */
     private $countryCode;
+
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $authyId;
+
+    /**
+     * @ORM\ManyToMany(targetEntity=Community::class, mappedBy="users")
+     */
+    private $communities;
+
+    /**
+     * @ORM\ManyToMany(targetEntity=Event::class, mappedBy="members")
+     */
+    private $events;
+
+    public function __construct()
+    {
+        $this->communities = new ArrayCollection();
+        $this->events = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -171,18 +184,6 @@ class User implements \JsonSerializable, UserInterface
         return $this;
     }
 
-    public function getIsVerified(): ?bool
-    {
-        return $this->isVerified;
-    }
-
-    public function setIsVerified(bool $isVerified): self
-    {
-        $this->isVerified = $isVerified;
-
-        return $this;
-    }
-
     public function getFirstName(): ?string
     {
         return $this->firstName;
@@ -243,23 +244,69 @@ class User implements \JsonSerializable, UserInterface
         return $this;
     }
 
-    /**
-     * Specify data which should be serialized to JSON
-     * @link https://php.net/manual/en/jsonserializable.jsonserialize.php
-     * @return mixed data which can be serialized by <b>json_encode</b>,
-     * which is a value of any type other than a resource.
-     * @since 5.4.0
-     */
-    public function jsonSerialize()
+    public function getAuthyId(): ?int
     {
-        return array(
-            "id" => $this->getId(),
-            "phone" => $this->getPhone(),
-            "roles" => $this->getRoles(),
-            "apiToken" => $this->getApiToken(),
-            "firstName" => $this->getFirstName(),
-            "avatar" => $this->getAvatar(),
-            "countryCode" => $this->getCountryCode()
-        );
+        return $this->authyId;
+    }
+
+    public function setAuthyId(int $authyId): self
+    {
+        $this->authyId = $authyId;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Community[]
+     */
+    public function getCommunities(): Collection
+    {
+        return $this->communities;
+    }
+
+    public function addCommunity(Community $community): self
+    {
+        if (!$this->communities->contains($community)) {
+            $this->communities[] = $community;
+            $community->addUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCommunity(Community $community): self
+    {
+        if ($this->communities->removeElement($community)) {
+            $community->removeUser($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Event[]
+     */
+    public function getEvents(): Collection
+    {
+        return $this->events;
+    }
+
+    public function addEvent(Event $event): self
+    {
+        if (!$this->events->contains($event)) {
+            $this->events[] = $event;
+            $event->addMember($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEvent(Event $event): self
+    {
+        if ($this->events->removeElement($event)) {
+            $event->removeMember($this);
+        }
+
+        return $this;
     }
 }
