@@ -6,12 +6,12 @@ use App\Repository\CommunityRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use JsonSerializable;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass=CommunityRepository::class)
  */
-class Community implements JsonSerializable
+class Community
 {
     /**
      * @ORM\Id
@@ -30,9 +30,15 @@ class Community implements JsonSerializable
      */
     private $users;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Event::class, mappedBy="community")
+     */
+    private $events;
+
     public function __construct()
     {
         $this->users = new ArrayCollection();
+        $this->events = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -52,10 +58,7 @@ class Community implements JsonSerializable
         return $this;
     }
 
-    /**
-     * @return Collection|User[]
-     */
-    public function getUsers(): Collection
+    public function getUsers()
     {
         return $this->users;
     }
@@ -76,11 +79,38 @@ class Community implements JsonSerializable
         return $this;
     }
 
-    public function jsonSerialize()
+    public function setData($data)
     {
-        return [
-            'id' => $this->id,
-            'name' => $this->name,
-        ];
+        foreach ($data as $key => $value)
+        {
+            $this->$key = $value;
+        }
+    }
+
+    public function getEvents()
+    {
+        return $this->events;
+    }
+
+    public function addEvent(Event $event): self
+    {
+        if (!$this->events->contains($event)) {
+            $this->events[] = $event;
+            $event->setCommunity($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEvent(Event $event): self
+    {
+        if ($this->events->removeElement($event)) {
+            // set the owning side to null (unless already changed)
+            if ($event->getCommunity() === $this) {
+                $event->setCommunity(null);
+            }
+        }
+
+        return $this;
     }
 }

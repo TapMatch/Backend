@@ -59,6 +59,11 @@ class Event
      */
     private $organizer;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=Community::class, inversedBy="events")
+     */
+    private $community;
+
     public function __construct()
     {
         $this->members = new ArrayCollection();
@@ -141,9 +146,6 @@ class Event
         return $this;
     }
 
-    /**
-     * @return Collection|User[]
-     */
     public function getMembers(): Collection
     {
         return $this->members;
@@ -175,5 +177,25 @@ class Event
         $this->organizer = $organizer;
 
         return $this;
+    }
+
+    public function getCommunity(): ?Community
+    {
+        return $this->community;
+    }
+
+    public function setCommunity(?Community $community): self
+    {
+        $this->community = $community;
+
+        return $this;
+    }
+
+    public function setData($data)
+    {
+        foreach ($data as $key => $value)
+        {
+            $this->$key = $value;
+        }
     }
 }

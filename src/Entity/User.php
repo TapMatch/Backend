@@ -9,7 +9,6 @@ use Doctrine\Common\Collections\ArrayCollection;
 use phpDocumentor\Reflection\Types\Integer;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
-use JMS\Serializer\Annotation as JMS;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -308,5 +307,21 @@ class User implements UserInterface
         }
 
         return $this;
+    }
+
+    public function setData($data)
+    {
+        foreach ($data as $key => $value)
+        {
+            $this->$key = $value;
+        }
+    }
+
+    public function jsonSerialize()
+    {
+        return [
+            'id' => $this->id,
+            'phone' => $this->phone,
+        ];
     }
 }

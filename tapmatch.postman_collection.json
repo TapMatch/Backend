@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "9072bc43-9af1-41f1-80b3-ce4a52368df6",
+		"_postman_id": "827eb1e6-f771-4498-adf2-90b317e55b01",
 		"name": "tapmatch",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -9,43 +9,13 @@
 			"name": "auth",
 			"item": [
 				{
-					"name": "Register",
+					"name": "login",
 					"request": {
 						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"phone\": \"380961234567\",\n    \"password\": \"password\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "127.0.0.1:8000/register",
-							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
-							],
-							"port": "8000",
-							"path": [
-								"register"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Login",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"phone\": \"380961234567\",\n    \"password\": \"password\"\n}",
+							"raw": "{\n    \"phone\": \"+380990981202\",\n    \"password\": \"password\",\n    \"country_code\": 38\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -64,8 +34,71 @@
 							"path": [
 								"login"
 							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "verify phone",
+					"request": {
+						"auth": {
+							"type": "noauth"
 						},
-						"description": "After login add to header\n\nKey: X-AUTH-TOKEN\n\nValue: \"token after success login\""
+						"method": "POST",
+						"header": [
+							{
+								"key": "Cookie",
+								"value": "",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"verify_code\": \"8259152\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/verify/code",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"verify",
+								"code"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "resend code",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8000/verify/resend",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"verify",
+								"resend"
+							]
+						}
 					},
 					"response": []
 				}
@@ -105,7 +138,7 @@
 							}
 						},
 						"url": {
-							"raw": "127.0.0.1:8000/api/profile/set-name",
+							"raw": "127.0.0.1:8000/api/profile/name",
 							"host": [
 								"127",
 								"0",
@@ -116,7 +149,7 @@
 							"path": [
 								"api",
 								"profile",
-								"set-name"
+								"name"
 							]
 						}
 					},
@@ -153,7 +186,7 @@
 							]
 						},
 						"url": {
-							"raw": "127.0.0.1:8000/api/profile/set-avatar",
+							"raw": "127.0.0.1:8000/api/profile/avatar",
 							"host": [
 								"127",
 								"0",
@@ -164,7 +197,623 @@
 							"path": [
 								"api",
 								"profile",
-								"set-avatar"
+								"avatar"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "[PUT] Edit profile info",
+					"request": {
+						"auth": {
+							"type": "apikey",
+							"apikey": [
+								{
+									"key": "value",
+									"value": "b2f45a4a70b363151a2ec15de34d5f3f",
+									"type": "string"
+								},
+								{
+									"key": "key",
+									"value": "X-AUTH-TOKEN",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"firstName\": \"Andrey\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "127.0.0.1:8000/api/profile",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"profile"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get user",
+					"request": {
+						"auth": {
+							"type": "apikey",
+							"apikey": [
+								{
+									"key": "value",
+									"value": "b2f45a4a70b363151a2ec15de34d5f3f",
+									"type": "string"
+								},
+								{
+									"key": "key",
+									"value": "X-AUTH-TOKEN",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/profile",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"profile"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "communities",
+			"item": [
+				{
+					"name": "delete community",
+					"request": {
+						"auth": {
+							"type": "apikey",
+							"apikey": [
+								{
+									"key": "value",
+									"value": "b2f45a4a70b363151a2ec15de34d5f3f",
+									"type": "string"
+								},
+								{
+									"key": "key",
+									"value": "X-AUTH-TOKEN",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/communities/2",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"communities",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get all communities",
+					"request": {
+						"auth": {
+							"type": "apikey",
+							"apikey": [
+								{
+									"key": "value",
+									"value": "b2f45a4a70b363151a2ec15de34d5f3f",
+									"type": "string"
+								},
+								{
+									"key": "key",
+									"value": "X-AUTH-TOKEN",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/communities",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"communities"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update community",
+					"request": {
+						"auth": {
+							"type": "apikey",
+							"apikey": [
+								{
+									"key": "value",
+									"value": "b2f45a4a70b363151a2ec15de34d5f3f",
+									"type": "string"
+								},
+								{
+									"key": "key",
+									"value": "X-AUTH-TOKEN",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"test\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/communities/2",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"communities",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "leave community",
+					"request": {
+						"auth": {
+							"type": "apikey",
+							"apikey": [
+								{
+									"key": "value",
+									"value": "b2f45a4a70b363151a2ec15de34d5f3f",
+									"type": "string"
+								},
+								{
+									"key": "key",
+									"value": "X-AUTH-TOKEN",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": []
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/communities/1/leave",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"communities",
+								"1",
+								"leave"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get community by id",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "apikey",
+							"apikey": [
+								{
+									"key": "value",
+									"value": "b2f45a4a70b363151a2ec15de34d5f3f",
+									"type": "string"
+								},
+								{
+									"key": "key",
+									"value": "X-AUTH-TOKEN",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/communities/1",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"communities",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "events",
+			"item": [
+				{
+					"name": "create event",
+					"request": {
+						"auth": {
+							"type": "apikey",
+							"apikey": [
+								{
+									"key": "value",
+									"value": "b2f45a4a70b363151a2ec15de34d5f3f",
+									"type": "string"
+								},
+								{
+									"key": "key",
+									"value": "X-AUTH-TOKEN",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n            \"name\": \"meet number two\",\n            \"description\": \"desc\",\n            \"date\": \"2020-12-25\",\n            \"coordinates\": \"test\",\n            \"address\": \"test\",\n            \"join_limit\":10\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/communities/1/events",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"communities",
+								"1",
+								"events"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "show event by id",
+					"request": {
+						"auth": {
+							"type": "apikey",
+							"apikey": [
+								{
+									"key": "value",
+									"value": "b2f45a4a70b363151a2ec15de34d5f3f",
+									"type": "string"
+								},
+								{
+									"key": "key",
+									"value": "X-AUTH-TOKEN",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/communities/1/events/1",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"communities",
+								"1",
+								"events",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "edit event",
+					"request": {
+						"auth": {
+							"type": "apikey",
+							"apikey": [
+								{
+									"key": "value",
+									"value": "b2f45a4a70b363151a2ec15de34d5f3f",
+									"type": "string"
+								},
+								{
+									"key": "key",
+									"value": "X-AUTH-TOKEN",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"trash\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/communities/1/events/1",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"communities",
+								"1",
+								"events",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete event",
+					"request": {
+						"auth": {
+							"type": "apikey",
+							"apikey": [
+								{
+									"key": "value",
+									"value": "b2f45a4a70b363151a2ec15de34d5f3f",
+									"type": "string"
+								},
+								{
+									"key": "key",
+									"value": "X-AUTH-TOKEN",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/communities/1/events/6",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"communities",
+								"1",
+								"events",
+								"6"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "join event",
+					"request": {
+						"auth": {
+							"type": "apikey",
+							"apikey": [
+								{
+									"key": "value",
+									"value": "b2f45a4a70b363151a2ec15de34d5f3f",
+									"type": "string"
+								},
+								{
+									"key": "key",
+									"value": "X-AUTH-TOKEN",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/communities/1/events/2/join",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"communities",
+								"1",
+								"events",
+								"2",
+								"join"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "leave event",
+					"request": {
+						"auth": {
+							"type": "apikey",
+							"apikey": [
+								{
+									"key": "value",
+									"value": "b2f45a4a70b363151a2ec15de34d5f3f",
+									"type": "string"
+								},
+								{
+									"key": "key",
+									"value": "X-AUTH-TOKEN",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/communities/1/events/1/leave",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"communities",
+								"1",
+								"events",
+								"1",
+								"leave"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "all events by community",
+					"request": {
+						"auth": {
+							"type": "apikey",
+							"apikey": [
+								{
+									"key": "value",
+									"value": "b2f45a4a70b363151a2ec15de34d5f3f",
+									"type": "string"
+								},
+								{
+									"key": "key",
+									"value": "X-AUTH-TOKEN",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/communities/1/events",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"communities",
+								"1",
+								"events"
 							]
 						}
 					},
