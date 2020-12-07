@@ -25,7 +25,7 @@ class RegistrationController extends AbstractController
     public function __construct(EntityManagerInterface $entityManager)
     {
         $this->em = $entityManager;
-        $this->authyApi = new AuthyApi(getenv('TWILIO_AUTHY_API_KEY'));
+        $this->authyApi = new AuthyApi('CF8gye42YbwBgeCoUMNPLdGKgxgVdzD7');
     }
 
     /**
