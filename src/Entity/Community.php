@@ -35,6 +35,11 @@ class Community
      */
     private $events;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $access;
+
     public function __construct()
     {
         $this->users = new ArrayCollection();
@@ -110,6 +115,18 @@ class Community
                 $event->setCommunity(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getAccess(): ?string
+    {
+        return $this->access;
+    }
+
+    public function setAccess(?string $access): self
+    {
+        $this->access = $access;
 
         return $this;
     }

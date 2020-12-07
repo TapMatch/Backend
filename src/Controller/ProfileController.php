@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Repository\UserRepository;
+use App\Serializer\Normalizer\UserNormalizer;
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -82,38 +83,14 @@ class ProfileController extends AbstractController
     /**
      * @Route("/api/profile", methods={"GET"})
      * @param UserRepository $userRepository
+     * @param UserNormalizer $userNormalizer
      * @return JsonResponse
      * @throws \Symfony\Component\Serializer\Exception\ExceptionInterface
      */
-    public function getProfile(UserRepository $userRepository)
+    public function getProfile(UserRepository $userRepository, UserNormalizer $userNormalizer)
     {
         $user = $userRepository->find($this->getUser());
 
-        $serializer = new Serializer([new ObjectNormalizer()]);
-
-        $data = $serializer->normalize($user, null, [AbstractNormalizer::ATTRIBUTES => [
-            'id',
-            'name',
-            'phone',
-            'firstName',
-            'events' => [
-                'id',
-                'name',
-                'address',
-                'coordinates',
-                'description',
-                'join_limit'
-            ],
-            'communities' => [
-                'id',
-                'name'
-            ]
-        ]]);
-
-        return new JsonResponse([
-            'data' => $data,
-            'message' => 'success',
-            'status' => 200
-        ]);
+        return $this->json($userNormalizer->normalize($user));
     }
 }

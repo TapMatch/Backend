@@ -5,147 +5,121 @@ namespace App\Controller;
 use App\Entity\Community;
 use App\Repository\CommunityRepository;
 use App\Repository\UserRepository;
+use App\Serializer\Normalizer\CommunityNormalizer;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Serializer\Encoder\JsonEncoder;
-use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
-use Symfony\Component\Serializer\Normalizer\GetSetMethodNormalizer;
-use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
-use Symfony\Component\Serializer\Serializer;
-use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-class CommunityController extends AbstractController
+class CommunityController extends APIController
 {
-    /**
-     * @param $obj
-     * @return array|\ArrayObject|bool|float|int|mixed|string|null
-     * @throws \Symfony\Component\Serializer\Exception\ExceptionInterface
-     */
-    public function serialize($obj)
-    {
-        $serializer = new Serializer([new ObjectNormalizer()]);
-
-        $data = $serializer->normalize($obj, null, [AbstractNormalizer::ATTRIBUTES => [
-            'id',
-            'name',
-            'events' => [
-                'id',
-                'name',
-                'address',
-                'coordinates',
-                'description',
-                'join_limit'
-            ],
-            'users' => [
-                'id',
-                'phone',
-                'firstName'
-            ]
-        ]]);
-
-        return $data;
-    }
-
     /**
      * @Route("/api/communities", methods={"GET"})
      * @param CommunityRepository $communityRepository
+     * @param CommunityNormalizer $communityNormalizer
      * @return JsonResponse
-     * @throws \Symfony\Component\Serializer\Exception\ExceptionInterface
      */
-    public function index(CommunityRepository $communityRepository)
+    public function index(CommunityRepository $communityRepository, CommunityNormalizer $communityNormalizer)
     {
-        $community = $communityRepository->findAll();
+        $communities = $communityRepository->findAll();
 
-        return new JsonResponse($this->serialize($community));
+        return $this->json(array_map(array($communityNormalizer, "normalize"), $communities));
     }
 
-//    /**
-//     * @Route("/api/communities", methods={"POST"})
-//     * @param Request $request
-//     * @param EntityManagerInterface $em
-//     * @return JsonResponse
-//     */
-//    public function create(Request $request, EntityManagerInterface $em)
-//    {
-//        $data = json_decode($request->getContent(), true);
-//
-//        $community = new Community();
-//        $community->setData($data);
-//        $em->persist($community);
-//        $em->flush();
-//
-//        return new JsonResponse([
-//            'data' => $this->serialize($community),
-//            'status' => 200
-//        ]);
-//    }
-
     /**
-     * @Route("/api/communities/{id}", methods={"GET"})
+     * @Route("/api/communities/{communityId}", methods={"GET"})
      * @param CommunityRepository $communityRepository
-     * @param int $id
+     * @param CommunityNormalizer $communityNormalizer
+     * @param int $communityId
+     * @param ValidatorInterface $validator
      * @return JsonResponse
      * @throws \Symfony\Component\Serializer\Exception\ExceptionInterface
      */
-    public function show(CommunityRepository $communityRepository,int $id)
+    public function show(CommunityRepository $communityRepository, CommunityNormalizer $communityNormalizer, int $communityId, ValidatorInterface $validator)
     {
-        $community = $communityRepository->find($id);
+        $check = $this->validateGetParams($communityId, Community::class);
 
-        return new JsonResponse($this->serialize($community));
+        if ($check) {
+            return $check;
+        }
+        $community = $communityRepository->find($communityId);
+
+        return $this->json($communityNormalizer->normalize($community));
 
     }
 
     /**
-     * @Route("/api/communities/{id}", methods={"PUT"})
+     * @Route("/api/communities", methods={"POST"})
      * @param Request $request
+     * @param CommunityNormalizer $communityNormalizer
      * @param EntityManagerInterface $em
-     * @param CommunityRepository $communityRepository
-     * @param int $id
      * @return JsonResponse
      * @throws \Symfony\Component\Serializer\Exception\ExceptionInterface
      */
-    public function update(Request $request, EntityManagerInterface $em, CommunityRepository $communityRepository,int $id)
+    public function create(Request $request,CommunityNormalizer $communityNormalizer, EntityManagerInterface $em)
     {
         $data = json_decode($request->getContent(), true);
 
-        $community = $communityRepository->find($id);
-
-        if (!$community) {
-            return new JsonResponse([
-                'error' => 'community with this id not found',
-                'status' => 422
-            ]);
-        }
+        $community = new Community();
         $community->setData($data);
         $em->persist($community);
         $em->flush();
 
         return new JsonResponse([
-            'data' => $this->serialize($community),
+            'data' => $communityNormalizer->normalize($community),
             'status' => 200
         ]);
     }
 
     /**
-     * @Route("/api/communities/{id}", methods={"DELETE"})
+     * @Route("/api/communities/{communityId}", methods={"PUT"})
+     * @param Request $request
+     * @param EntityManagerInterface $em
+     * @param CommunityRepository $communityRepository
+     * @param CommunityNormalizer $communityNormalizer
+     * @param int $communityId
+     * @return JsonResponse
+     * @throws \Symfony\Component\Serializer\Exception\ExceptionInterface
+     */
+    public function update(
+        Request $request,
+        EntityManagerInterface $em,
+        CommunityRepository $communityRepository,
+        CommunityNormalizer $communityNormalizer,
+        int $communityId
+    )
+    {
+        $data = json_decode($request->getContent(), true);
+        $check = $this->validateGetParams($communityId, Community::class);
+
+        if ($check) {
+            return $check;
+        }
+
+        $community = $communityRepository->find($communityId);
+        $community->setData($data);
+        $em->persist($community);
+        $em->flush();
+
+        return $this->json($communityNormalizer->normalize($community));
+    }
+
+    /**
+     * @Route("/api/communities/{communityId}", methods={"DELETE"})
      * @param CommunityRepository $communityRepository
      * @param EntityManagerInterface $em
-     * @param int $id
+     * @param int $communityId
      * @return JsonResponse
      */
-    public function destroy(CommunityRepository $communityRepository, EntityManagerInterface $em, int $id)
+    public function destroy(CommunityRepository $communityRepository, EntityManagerInterface $em, int $communityId)
     {
-        $community = $communityRepository->find($id);
+        $check = $this->validateGetParams($communityId, Community::class);
 
-        if (!$community) {
-            return new JsonResponse([
-                'error' => 'community with this id not found',
-                'status' => 422
-            ]);
+        if ($check) {
+            return $check;
         }
+        $community = $communityRepository->find($communityId);
 
         $em->remove($community);
         $em->flush();
@@ -157,67 +131,63 @@ class CommunityController extends AbstractController
     }
 
     /**
-     * @Route("/api/communities/{id}/leave", methods={"DELETE"})
+     * @Route("/api/communities/{communityId}/leave", methods={"DELETE"})
      * @param CommunityRepository $communityRepository
      * @param EntityManagerInterface $em
-     * @param int $id
+     * @param int $communityId
      * @return JsonResponse
      */
-    public function leave(CommunityRepository $communityRepository, EntityManagerInterface $em, int $id)
+    public function leave(CommunityRepository $communityRepository, EntityManagerInterface $em, int $communityId)
     {
-        $community = $communityRepository->find($id);
 
-        if (!$community) {
-            return new JsonResponse([
-                'error' => 'community with this id not found',
-                'status' => 422
-            ]);
+        $check = $this->validateGetParams($communityId, Community::class);
+        if ($check) {
+            return $check;
         }
-        try {
 
-            $community->removeUser($this->getUser());
-            $em->flush();
+        $community = $communityRepository->find($communityId);
+        $community->removeUser($this->getUser());
+        $em->flush();
 
-            return new JsonResponse([
-                'success' => 'you left the community',
-                'status' => 200
-            ]);
-        } catch(\Exception $exception)
-        {
-            return new JsonResponse($exception);
-        }
+        return new JsonResponse([
+            'success' => 'you left the community',
+            'status' => 200
+        ]);
+
     }
 
     /**
-     * @Route("/api/communities/{id}/join", methods={"POST"})
+     * @Route("/api/communities/{communityId}/join", methods={"POST"})
+     * @param Request $request
      * @param CommunityRepository $communityRepository
      * @param EntityManagerInterface $em
-     * @param int $id
+     * @param int $communityId
      * @return JsonResponse
      */
-    public function join(CommunityRepository $communityRepository, EntityManagerInterface $em, int $id)
+    public function join(Request $request, CommunityRepository $communityRepository, EntityManagerInterface $em, int $communityId)
     {
-        $community = $communityRepository->find($id);
+        $data = json_decode($request->getContent(), true);
+        $check = $this->validateGetParams($communityId, Community::class);
+        if ($check) {
+            return $check;
+        }
 
-        if (!$community) {
-            return new JsonResponse([
-                'error' => 'community with this id not found',
+        $community = $communityRepository->find($communityId);
+        if($community->getAccess() !== ($data['access'] ?? null))
+        {
+            return $this->json([
+                'error' => 'incorrect code',
                 'status' => 422
             ]);
         }
-        try {
+        $community->addUser($this->getUser());
+        $em->flush();
 
-            $community->addUser($this->getUser());
-            $em->flush();
+        return new JsonResponse([
+            'success' => 'you joined this community',
+            'status' => 200
+        ]);
 
-            return new JsonResponse([
-                'success' => 'you joined this community',
-                'status' => 200
-            ]);
-        } catch(\Exception $exception)
-        {
-            return new JsonResponse($exception);
-        }
     }
 
 }

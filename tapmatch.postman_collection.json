@@ -301,7 +301,7 @@
 							"apikey": [
 								{
 									"key": "value",
-									"value": "b2f45a4a70b363151a2ec15de34d5f3f",
+									"value": "2b18b7d84cbbeda84e54efdcdb12bc0a",
 									"type": "string"
 								},
 								{
@@ -314,7 +314,7 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "http://127.0.0.1:8000/api/communities/2",
+							"raw": "http://127.0.0.1:8000/api/communities/9",
 							"protocol": "http",
 							"host": [
 								"127",
@@ -326,7 +326,7 @@
 							"path": [
 								"api",
 								"communities",
-								"2"
+								"9"
 							]
 						}
 					},
@@ -378,7 +378,7 @@
 							"apikey": [
 								{
 									"key": "value",
-									"value": "b2f45a4a70b363151a2ec15de34d5f3f",
+									"value": "2b18b7d84cbbeda84e54efdcdb12bc0a",
 									"type": "string"
 								},
 								{
@@ -473,7 +473,7 @@
 							"apikey": [
 								{
 									"key": "value",
-									"value": "b2f45a4a70b363151a2ec15de34d5f3f",
+									"value": "2b18b7d84cbbeda84e54efdcdb12bc0a",
 									"type": "string"
 								},
 								{
@@ -503,6 +503,102 @@
 								"api",
 								"communities",
 								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "join community",
+					"request": {
+						"auth": {
+							"type": "apikey",
+							"apikey": [
+								{
+									"key": "value",
+									"value": "2b18b7d84cbbeda84e54efdcdb12bc0a",
+									"type": "string"
+								},
+								{
+									"key": "key",
+									"value": "X-AUTH-TOKEN",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"access\": \"120021\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/communities/9/join",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"communities",
+								"9",
+								"join"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create community",
+					"request": {
+						"auth": {
+							"type": "apikey",
+							"apikey": [
+								{
+									"key": "value",
+									"value": "2b18b7d84cbbeda84e54efdcdb12bc0a",
+									"type": "string"
+								},
+								{
+									"key": "key",
+									"value": "X-AUTH-TOKEN",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"TUM\",\n    \"access\": \"120021\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/communities",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"communities"
 							]
 						}
 					},
@@ -571,7 +667,7 @@
 							"apikey": [
 								{
 									"key": "value",
-									"value": "b2f45a4a70b363151a2ec15de34d5f3f",
+									"value": "2b18b7d84cbbeda84e54efdcdb12bc0a",
 									"type": "string"
 								},
 								{
@@ -612,7 +708,7 @@
 							"apikey": [
 								{
 									"key": "value",
-									"value": "b2f45a4a70b363151a2ec15de34d5f3f",
+									"value": "2b18b7d84cbbeda84e54efdcdb12bc0a",
 									"type": "string"
 								},
 								{
@@ -787,7 +883,7 @@
 							"apikey": [
 								{
 									"key": "value",
-									"value": "b2f45a4a70b363151a2ec15de34d5f3f",
+									"value": "2b18b7d84cbbeda84e54efdcdb12bc0a",
 									"type": "string"
 								},
 								{
