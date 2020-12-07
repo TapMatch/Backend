@@ -102,12 +102,8 @@ class RegistrationController extends AbstractController
     public function resendCode()
     {
         $user = $this->get('session')->get('user');
-        $sms = $this->authyApi->requestSms($user['authyId'], ["force" => "true"]);
 
-        return new JsonResponse($sms->ok() ?
-            ['message' => 'Verification code sent']
-            :
-            ['error' => 'something went wrong']);
+        return $sms = $this->sendSMS($user);
     }
 
     /**
