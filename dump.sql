@@ -64,7 +64,7 @@ CREATE TABLE `community_user` (
 
 LOCK TABLES `community_user` WRITE;
 /*!40000 ALTER TABLE `community_user` DISABLE KEYS */;
-INSERT INTO `community_user` VALUES (3,3);
+INSERT INTO `community_user` VALUES (3,3),(10,6);
 /*!40000 ALTER TABLE `community_user` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -89,7 +89,7 @@ CREATE TABLE `doctrine_migration_versions` (
 
 LOCK TABLES `doctrine_migration_versions` WRITE;
 /*!40000 ALTER TABLE `doctrine_migration_versions` DISABLE KEYS */;
-INSERT INTO `doctrine_migration_versions` VALUES ('DoctrineMigrations\\Version20201124150212','2020-12-01 18:24:20',31),('DoctrineMigrations\\Version20201124152726','2020-12-01 18:24:20',35),('DoctrineMigrations\\Version20201125150409','2020-12-01 18:24:20',26),('DoctrineMigrations\\Version20201125151954','2020-12-01 18:24:20',27),('DoctrineMigrations\\Version20201130152741','2020-12-01 18:24:20',25),('DoctrineMigrations\\Version20201203082053','2020-12-03 10:20:59',101),('DoctrineMigrations\\Version20201203112144','2020-12-03 13:22:08',105),('DoctrineMigrations\\Version20201203120750','2020-12-03 14:08:34',41),('DoctrineMigrations\\Version20201203121456','2020-12-03 14:15:02',84),('DoctrineMigrations\\Version20201203122129','2020-12-03 14:21:34',32),('DoctrineMigrations\\Version20201203122515','2020-12-03 14:25:19',200),('DoctrineMigrations\\Version20201203123615','2020-12-03 14:36:20',131),('DoctrineMigrations\\Version20201203123842','2020-12-03 14:38:45',48),('DoctrineMigrations\\Version20201203131141','2020-12-03 15:11:59',104),('DoctrineMigrations\\Version20201203131921','2020-12-03 15:19:34',115),('DoctrineMigrations\\Version20201203132243','2020-12-03 15:22:46',193),('DoctrineMigrations\\Version20201203170144','2020-12-03 19:01:48',68),('DoctrineMigrations\\Version20201203172235','2020-12-03 19:22:37',183),('DoctrineMigrations\\Version20201204100134','2020-12-04 12:02:03',124),('DoctrineMigrations\\Version20201207133509','2020-12-07 15:35:16',86);
+INSERT INTO `doctrine_migration_versions` VALUES ('DoctrineMigrations\\Version20201124150212','2020-12-01 18:24:20',31),('DoctrineMigrations\\Version20201124152726','2020-12-01 18:24:20',35),('DoctrineMigrations\\Version20201125150409','2020-12-01 18:24:20',26),('DoctrineMigrations\\Version20201125151954','2020-12-01 18:24:20',27),('DoctrineMigrations\\Version20201130152741','2020-12-01 18:24:20',25),('DoctrineMigrations\\Version20201203082053','2020-12-03 10:20:59',101),('DoctrineMigrations\\Version20201203112144','2020-12-03 13:22:08',105),('DoctrineMigrations\\Version20201203120750','2020-12-03 14:08:34',41),('DoctrineMigrations\\Version20201203121456','2020-12-03 14:15:02',84),('DoctrineMigrations\\Version20201203122129','2020-12-03 14:21:34',32),('DoctrineMigrations\\Version20201203122515','2020-12-03 14:25:19',200),('DoctrineMigrations\\Version20201203123615','2020-12-03 14:36:20',131),('DoctrineMigrations\\Version20201203123842','2020-12-03 14:38:45',48),('DoctrineMigrations\\Version20201203131141','2020-12-03 15:11:59',104),('DoctrineMigrations\\Version20201203131921','2020-12-03 15:19:34',115),('DoctrineMigrations\\Version20201203132243','2020-12-03 15:22:46',193),('DoctrineMigrations\\Version20201203170144','2020-12-03 19:01:48',68),('DoctrineMigrations\\Version20201203172235','2020-12-03 19:22:37',183),('DoctrineMigrations\\Version20201204100134','2020-12-04 12:02:03',124),('DoctrineMigrations\\Version20201207133509','2020-12-07 15:35:16',86),('DoctrineMigrations\\Version20201208101516','2020-12-08 12:15:33',93);
 /*!40000 ALTER TABLE `doctrine_migration_versions` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -115,7 +115,7 @@ CREATE TABLE `event` (
   KEY `IDX_3BAE0AA7FDA7B0BF` (`community_id`),
   CONSTRAINT `FK_3BAE0AA7876C4DDA` FOREIGN KEY (`organizer_id`) REFERENCES `user` (`id`),
   CONSTRAINT `FK_3BAE0AA7FDA7B0BF` FOREIGN KEY (`community_id`) REFERENCES `community` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -172,10 +172,11 @@ CREATE TABLE `user` (
   `avatar` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `country_code` int(11) NOT NULL,
   `authy_id` int(11) NOT NULL,
+  `finished_onboarding` tinyint(1) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `UNIQ_8D93D649444F97DD` (`phone`),
   UNIQUE KEY `UNIQ_8D93D6497BA2F5EB` (`api_token`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -184,7 +185,7 @@ CREATE TABLE `user` (
 
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
-INSERT INTO `user` VALUES (3,'+380954335836','[\"123\"]','2b18b7d84cbbeda84e54efdcdb12bc0a','Andrey','2020-12-07',NULL,NULL,38,319002116),(4,'+380964237770','[\"123\"]',NULL,NULL,NULL,NULL,NULL,38,318694721),(5,'+380990981202','[\"terst\", \"zalupa\"]',NULL,'loh',NULL,NULL,NULL,38,319002283);
+INSERT INTO `user` VALUES (3,'+380954335836','[\"123\"]','2b18b7d84cbbeda84e54efdcdb12bc0a','Andrey','2020-12-07',NULL,'7e13450187ab09f2aec376c70859c5c8.png',38,319002116,0),(5,'+380990981202','[\"terst\", \"zalupa\"]',NULL,'loh',NULL,NULL,NULL,38,319002283,0),(6,'+380964237770','[\"admin\"]','4577df3410e6695faf570b56c9fca908','Valera','2020-12-08',NULL,NULL,38,318694721,1);
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -197,4 +198,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-12-07 15:59:27
+-- Dump completed on 2020-12-08 13:17:36

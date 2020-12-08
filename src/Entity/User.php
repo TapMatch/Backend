@@ -87,6 +87,11 @@ class User implements UserInterface
      */
     private $events;
 
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $finishedOnboarding = false;
+
     public function __construct()
     {
         $this->communities = new ArrayCollection();
@@ -317,11 +322,15 @@ class User implements UserInterface
         }
     }
 
-    public function jsonSerialize()
+    public function getFinishedOnboarding(): ?bool
     {
-        return [
-            'id' => $this->id,
-            'phone' => $this->phone,
-        ];
+        return $this->finishedOnboarding;
+    }
+
+    public function setFinishedOnboarding(bool $finishedOnboarding): self
+    {
+        $this->finishedOnboarding = $finishedOnboarding;
+
+        return $this;
     }
 }

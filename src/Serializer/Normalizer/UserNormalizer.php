@@ -23,6 +23,7 @@ class UserNormalizer implements NormalizerInterface, CacheableSupportsMethodInte
             'id' => $object->getId(),
             'name' => $object->getFirstName(),
             'phone' => $object->getPhone(),
+            'finished_onboarding' => $object->getFinishedOnboarding(),
             'events' => array_map(function (Event $event) {
                 return [
                     'id' => $event->getId(),

@@ -15,7 +15,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"phone\": \"+380990981202\",\n    \"password\": \"password\",\n    \"country_code\": 38\n}",
+							"raw": "{\n    \"phone\": \"+380990981202\",\n    \"country_code\": 38\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -116,7 +116,7 @@
 							"apikey": [
 								{
 									"key": "value",
-									"value": "d38d9a59963a875fec91d6f0b4e232db",
+									"value": "4577df3410e6695faf570b56c9fca908",
 									"type": "string"
 								},
 								{
@@ -126,11 +126,11 @@
 								}
 							]
 						},
-						"method": "POST",
+						"method": "PUT",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"name\": \"Valera\"\n}",
+							"raw": "{\n    \"first_name\": \"Valera\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -163,7 +163,7 @@
 							"apikey": [
 								{
 									"key": "value",
-									"value": "d38d9a59963a875fec91d6f0b4e232db",
+									"value": "2b18b7d84cbbeda84e54efdcdb12bc0a",
 									"type": "string"
 								},
 								{
@@ -181,7 +181,7 @@
 								{
 									"key": "photo",
 									"type": "file",
-									"src": []
+									"src": "/home/admin2/Загрузки/application.png"
 								}
 							]
 						},
@@ -211,7 +211,7 @@
 							"apikey": [
 								{
 									"key": "value",
-									"value": "b2f45a4a70b363151a2ec15de34d5f3f",
+									"value": "4577df3410e6695faf570b56c9fca908",
 									"type": "string"
 								},
 								{
@@ -225,7 +225,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"firstName\": \"Andrey\"\n}",
+							"raw": "{\n    \"first_name\": \"Sasha\",\n    \"finished_onboarding\": false\n}",
 							"options": {
 								"raw": {
 									"language": "json"
