@@ -41,7 +41,8 @@ class UserNormalizer implements NormalizerInterface, CacheableSupportsMethodInte
             'communities' => array_map(function (Community $community) {
                 return [
                     'id' => $community->getId(),
-                    'name' => $community->getName()
+                    'name' => $community->getName(),
+                    'access' => $community->getAccess(),
                 ];
             },
                 $object->getCommunities()->toArray())

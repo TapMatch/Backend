@@ -40,6 +40,11 @@ class Community
      */
     private $access;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $city;
+
     public function __construct()
     {
         $this->users = new ArrayCollection();
@@ -127,6 +132,18 @@ class Community
     public function setAccess(?string $access): self
     {
         $this->access = $access;
+
+        return $this;
+    }
+
+    public function getCity(): ?string
+    {
+        return $this->city;
+    }
+
+    public function setCity(?string $city): self
+    {
+        $this->city = $city;
 
         return $this;
     }
