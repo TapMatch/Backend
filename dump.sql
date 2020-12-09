@@ -1,8 +1,8 @@
 -- MySQL dump 10.13  Distrib 5.7.32, for Linux (x86_64)
 --
--- Host: 127.0.0.1    Database: tapmatch
+-- Host: localhost    Database: tapmatch
 -- ------------------------------------------------------
--- Server version	5.7.32-0ubuntu0.18.04.1
+-- Server version	5.7.31-0ubuntu0.18.04.1
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -26,6 +26,7 @@ CREATE TABLE `community` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `access` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `city` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -36,7 +37,7 @@ CREATE TABLE `community` (
 
 LOCK TABLES `community` WRITE;
 /*!40000 ALTER TABLE `community` DISABLE KEYS */;
-INSERT INTO `community` VALUES (3,'Амстердам','00007'),(6,'UCL','06996'),(10,'TUM','120021');
+INSERT INTO `community` VALUES (3,'UvA','000007','Amstedram'),(6,'UCL','006996','London'),(10,'TUM','120021','Munich');
 /*!40000 ALTER TABLE `community` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -64,7 +65,7 @@ CREATE TABLE `community_user` (
 
 LOCK TABLES `community_user` WRITE;
 /*!40000 ALTER TABLE `community_user` DISABLE KEYS */;
-INSERT INTO `community_user` VALUES (3,3),(10,6);
+INSERT INTO `community_user` VALUES (3,3),(3,5),(3,7),(3,11),(3,17),(6,7),(10,6),(10,7);
 /*!40000 ALTER TABLE `community_user` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -89,7 +90,7 @@ CREATE TABLE `doctrine_migration_versions` (
 
 LOCK TABLES `doctrine_migration_versions` WRITE;
 /*!40000 ALTER TABLE `doctrine_migration_versions` DISABLE KEYS */;
-INSERT INTO `doctrine_migration_versions` VALUES ('DoctrineMigrations\\Version20201124150212','2020-12-01 18:24:20',31),('DoctrineMigrations\\Version20201124152726','2020-12-01 18:24:20',35),('DoctrineMigrations\\Version20201125150409','2020-12-01 18:24:20',26),('DoctrineMigrations\\Version20201125151954','2020-12-01 18:24:20',27),('DoctrineMigrations\\Version20201130152741','2020-12-01 18:24:20',25),('DoctrineMigrations\\Version20201203082053','2020-12-03 10:20:59',101),('DoctrineMigrations\\Version20201203112144','2020-12-03 13:22:08',105),('DoctrineMigrations\\Version20201203120750','2020-12-03 14:08:34',41),('DoctrineMigrations\\Version20201203121456','2020-12-03 14:15:02',84),('DoctrineMigrations\\Version20201203122129','2020-12-03 14:21:34',32),('DoctrineMigrations\\Version20201203122515','2020-12-03 14:25:19',200),('DoctrineMigrations\\Version20201203123615','2020-12-03 14:36:20',131),('DoctrineMigrations\\Version20201203123842','2020-12-03 14:38:45',48),('DoctrineMigrations\\Version20201203131141','2020-12-03 15:11:59',104),('DoctrineMigrations\\Version20201203131921','2020-12-03 15:19:34',115),('DoctrineMigrations\\Version20201203132243','2020-12-03 15:22:46',193),('DoctrineMigrations\\Version20201203170144','2020-12-03 19:01:48',68),('DoctrineMigrations\\Version20201203172235','2020-12-03 19:22:37',183),('DoctrineMigrations\\Version20201204100134','2020-12-04 12:02:03',124),('DoctrineMigrations\\Version20201207133509','2020-12-07 15:35:16',86),('DoctrineMigrations\\Version20201208101516','2020-12-08 12:15:33',93);
+INSERT INTO `doctrine_migration_versions` VALUES ('DoctrineMigrations\\Version20201124150212','2020-12-01 18:24:20',31),('DoctrineMigrations\\Version20201124152726','2020-12-01 18:24:20',35),('DoctrineMigrations\\Version20201125150409','2020-12-01 18:24:20',26),('DoctrineMigrations\\Version20201125151954','2020-12-01 18:24:20',27),('DoctrineMigrations\\Version20201130152741','2020-12-01 18:24:20',25),('DoctrineMigrations\\Version20201203082053','2020-12-03 10:20:59',101),('DoctrineMigrations\\Version20201203112144','2020-12-03 13:22:08',105),('DoctrineMigrations\\Version20201203120750','2020-12-03 14:08:34',41),('DoctrineMigrations\\Version20201203121456','2020-12-03 14:15:02',84),('DoctrineMigrations\\Version20201203122129','2020-12-03 14:21:34',32),('DoctrineMigrations\\Version20201203122515','2020-12-03 14:25:19',200),('DoctrineMigrations\\Version20201203123615','2020-12-03 14:36:20',131),('DoctrineMigrations\\Version20201203123842','2020-12-03 14:38:45',48),('DoctrineMigrations\\Version20201203131141','2020-12-03 15:11:59',104),('DoctrineMigrations\\Version20201203131921','2020-12-03 15:19:34',115),('DoctrineMigrations\\Version20201203132243','2020-12-03 15:22:46',193),('DoctrineMigrations\\Version20201203170144','2020-12-03 19:01:48',68),('DoctrineMigrations\\Version20201203172235','2020-12-03 19:22:37',183),('DoctrineMigrations\\Version20201204100134','2020-12-04 12:02:03',124),('DoctrineMigrations\\Version20201207133509','2020-12-07 15:35:16',86),('DoctrineMigrations\\Version20201208101516','2020-12-08 12:15:33',93),('DoctrineMigrations\\Version20201208101529','2020-12-08 15:46:46',34),('DoctrineMigrations\\Version20201208124516','2020-12-08 15:46:46',134);
 /*!40000 ALTER TABLE `doctrine_migration_versions` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -176,7 +177,7 @@ CREATE TABLE `user` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `UNIQ_8D93D649444F97DD` (`phone`),
   UNIQUE KEY `UNIQ_8D93D6497BA2F5EB` (`api_token`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -185,7 +186,7 @@ CREATE TABLE `user` (
 
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
-INSERT INTO `user` VALUES (3,'+380954335836','[\"123\"]','2b18b7d84cbbeda84e54efdcdb12bc0a','Andrey','2020-12-07',NULL,'7e13450187ab09f2aec376c70859c5c8.png',38,319002116,0),(5,'+380990981202','[\"terst\", \"zalupa\"]',NULL,'loh',NULL,NULL,NULL,38,319002283,0),(6,'+380964237770','[\"admin\"]','4577df3410e6695faf570b56c9fca908','Valera','2020-12-08',NULL,NULL,38,318694721,1);
+INSERT INTO `user` VALUES (3,'+380954335836','[\"123\"]','2b18b7d84cbbeda84e54efdcdb12bc0a','Andrey','2020-12-07',NULL,'7e13450187ab09f2aec376c70859c5c8.png',38,319002116,0),(5,'+380990981202','[\"terst\", \"zalupa\"]','e28548469893d3ffb6766e92f307a4b9','Stepan','2020-12-09',NULL,'2a5bf5db5491b13a43258369c030f7c8.jpg',38,319002283,1),(6,'+380964237770','[\"admin\"]','4577df3410e6695faf570b56c9fca908','Valera','2020-12-08',NULL,NULL,38,318694721,1),(7,'+79771278435','[]','b4343457cf89e776fead052b703bf1ac','ffff','2020-12-09',NULL,'93bf83f229c76b5fe9f2f7963c3099a3.jpg',7,321240702,1),(8,'+79771278135','[]',NULL,NULL,NULL,NULL,NULL,7,321741387,0),(9,'+375259586720','[]',NULL,NULL,NULL,NULL,NULL,375,242850442,0),(10,'+79520378969','[]','f01f59ed646d1615999f972ccdfca0a5','Alexey12@8_+_+_;\"!!\"(_(_)_)_(_!$!+_+_+_+','2020-12-08',NULL,'84b851ba93d061a30164a18f93ffe1d6.jpg',7,321759748,1),(11,'+375292103568','[]','f6b638d771fc20c2879201bba9ac0c0f','Egor','2020-12-09',NULL,'481edb2a55ef46cfe5e71075e049c280.jpg',375,321801469,1),(12,'+79913915013','[]',NULL,NULL,NULL,NULL,NULL,7,321813866,0),(13,'+79657298870','[]',NULL,NULL,NULL,NULL,NULL,7,321816112,0),(14,'+79966927580','[]','df83cfb38955da67be12845a7c53ca02','Alexey19&(&;₽:&:@:9:&;8;9;9;&&;&:9;02&,₽','2020-12-08',NULL,'aa533de1babc93ac2960c7090a7e58e9.jpg',7,321816601,1),(15,'+79771228435','[]',NULL,NULL,NULL,NULL,NULL,7,322026502,0),(16,'+491516712764','[]',NULL,NULL,NULL,NULL,NULL,49,322079084,0),(17,'+31639054123','[]','9e2d120a4eb875530a7f157b1020f102','Leon','2020-12-09',NULL,'e676fda194524be6bfbd2af5f08d45d0.jpg',31,322092101,1),(18,'+4915167127644','[]','706aa82d5ec580134b4ed2df5c6b1326','jcfjfuf','2020-12-09',NULL,'e07ac112783a4e72d624009777debffe.jpg',49,322105763,1);
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -198,4 +199,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-12-08 13:17:36
+-- Dump completed on 2020-12-09 18:51:48
