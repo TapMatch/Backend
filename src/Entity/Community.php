@@ -45,6 +45,11 @@ class Community
      */
     private $city;
 
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $isOpen;
+
     public function __construct()
     {
         $this->users = new ArrayCollection();
@@ -144,6 +149,18 @@ class Community
     public function setCity(?string $city): self
     {
         $this->city = $city;
+
+        return $this;
+    }
+
+    public function getIsOpen(): ?bool
+    {
+        return $this->isOpen;
+    }
+
+    public function setIsOpen(bool $isOpen): self
+    {
+        $this->isOpen = $isOpen;
 
         return $this;
     }

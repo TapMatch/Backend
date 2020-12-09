@@ -22,7 +22,7 @@ class CommunityController extends APIController
      */
     public function index(CommunityRepository $communityRepository, CommunityNormalizer $communityNormalizer)
     {
-        $communities = $communityRepository->findAll();
+        $communities = $communityRepository->findBy([],['id' => 'DESC']);
 
         return $this->json(array_map(array($communityNormalizer, "normalize"), $communities));
     }
@@ -62,7 +62,9 @@ class CommunityController extends APIController
         $data = json_decode($request->getContent(), true);
 
         $community = new Community();
-        $community->setData($data);
+        $community->setIsOpen($data['is_open']);
+        $community->setName($data['name']);
+        isset($data['access']) ? $community->setAccess($data['access']) : false;
         $em->persist($community);
         $em->flush();
 

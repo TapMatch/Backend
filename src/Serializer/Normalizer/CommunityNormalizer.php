@@ -23,6 +23,7 @@ class CommunityNormalizer implements NormalizerInterface, CacheableSupportsMetho
             'id' => $object->getId(),
             'name' => $object->getName(),
             'city' => $object->getCity(),
+            'is_open' => $object->getIsOpen(),
             'events' => array_map(function (Event $event) {
                 return [
                     'id' => $event->getId(),

@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "827eb1e6-f771-4498-adf2-90b317e55b01",
+		"_postman_id": "fd8e0840-dc6a-466b-832f-f79635238cef",
 		"name": "tapmatch",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -579,7 +579,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"name\": \"TUM\",\n    \"access\": \"120021\"\n}",
+							"raw": "{\n    \"name\": \"TUM\",\n    \"is_open\": false,\n    \"access\": \"test\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
