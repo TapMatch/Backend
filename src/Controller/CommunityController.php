@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Community;
 use App\Repository\CommunityRepository;
+use App\Repository\EventRepository;
 use App\Repository\UserRepository;
 use App\Serializer\Normalizer\CommunityNormalizer;
 use Doctrine\ORM\EntityManagerInterface;
@@ -68,7 +69,7 @@ class CommunityController extends APIController
         $em->persist($community);
         $em->flush();
 
-        return new JsonResponse([
+        return $this->json([
             'data' => $communityNormalizer->normalize($community),
             'status' => 200
         ]);
@@ -126,7 +127,7 @@ class CommunityController extends APIController
         $em->remove($community);
         $em->flush();
 
-        return new JsonResponse([
+        return $this->json([
             'success' => 'community successfully deleted',
             'status' => 200
         ]);
@@ -151,7 +152,7 @@ class CommunityController extends APIController
         $community->removeUser($this->getUser());
         $em->flush();
 
-        return new JsonResponse([
+        return $this->json([
             'success' => 'you left the community',
             'status' => 200
         ]);
@@ -185,11 +186,26 @@ class CommunityController extends APIController
         $community->addUser($this->getUser());
         $em->flush();
 
-        return new JsonResponse([
+        return $this->json([
             'success' => 'you joined this community',
             'status' => 200
         ]);
 
     }
 
+    /**
+     * @Route("/api/communities/{communityId}/upcoming-events", methods={"GET"})
+     * @param EventRepository $eventRepository
+     * @param int $communityId
+     * @return JsonResponse
+     */
+    public function upcomingEvents(EventRepository $eventRepository, int $communityId)
+    {
+        $check = $this->validateGetParams($communityId, Community::class);
+        if ($check) {
+            return $check;
+        }
+
+        return $this->json($eventRepository->findByField($communityId, 'community', 5, 'date', 'ASC'), 200);
+    }
 }

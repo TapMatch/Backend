@@ -340,7 +340,7 @@
 							"apikey": [
 								{
 									"key": "value",
-									"value": "b2f45a4a70b363151a2ec15de34d5f3f",
+									"value": "2b18b7d84cbbeda84e54efdcdb12bc0a",
 									"type": "string"
 								},
 								{
@@ -509,6 +509,52 @@
 					"response": []
 				},
 				{
+					"name": "get community by id Copy",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "apikey",
+							"apikey": [
+								{
+									"key": "value",
+									"value": "2b18b7d84cbbeda84e54efdcdb12bc0a",
+									"type": "string"
+								},
+								{
+									"key": "key",
+									"value": "X-AUTH-TOKEN",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/communities/1",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"communities",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "join community",
 					"request": {
 						"auth": {
@@ -603,6 +649,53 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "upcoming events",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "apikey",
+							"apikey": [
+								{
+									"key": "value",
+									"value": "2b18b7d84cbbeda84e54efdcdb12bc0a",
+									"type": "string"
+								},
+								{
+									"key": "key",
+									"value": "X-AUTH-TOKEN",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/communities/1/upcoming-events",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"communities",
+								"1",
+								"upcoming-events"
+							]
+						}
+					},
+					"response": []
 				}
 			],
 			"protocolProfileBehavior": {}
@@ -660,7 +753,7 @@
 					"response": []
 				},
 				{
-					"name": "show event by id",
+					"name": "show event by id - geomarkers",
 					"request": {
 						"auth": {
 							"type": "apikey",
@@ -680,7 +773,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://127.0.0.1:8000/api/communities/1/events/1",
+							"raw": "http://127.0.0.1:8000/api/communities/3/events/3",
 							"protocol": "http",
 							"host": [
 								"127",
@@ -692,9 +785,9 @@
 							"path": [
 								"api",
 								"communities",
-								"1",
+								"3",
 								"events",
-								"1"
+								"3"
 							]
 						}
 					},

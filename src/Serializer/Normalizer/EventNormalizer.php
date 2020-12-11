@@ -22,21 +22,12 @@ class EventNormalizer implements NormalizerInterface, CacheableSupportsMethodInt
         return [
             'id' => $object->getId(),
             'name' => $object->getName(),
-            'date' => $object->getDate(),
+            'datetime' => $object->getDate(),
             'address' => $object->getAddress(),
             'coordinates' => $object->getCoordinates(),
             'description' => $object->getDescription(),
             'join_limit' => $object->getJoinLimit(),
-            'members' => array_map(function (User $user) {
-                return [
-                    'id' => $user->getId(),
-                    'name' => $user->getFirstName(),
-                    'address' => $user->getPhone()
-                ];
-            },
-                $object->getMembers()->toArray())
-
-            ,
+            'joined' => count($object->getMembers()),
             'organizer' => $object->getOrganizer()->getId()
         ];
     }

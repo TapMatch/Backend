@@ -18,7 +18,6 @@ class CommunityRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Community::class);
     }
-
     // /**
     //  * @return Community[] Returns an array of Community objects
     //  */

@@ -31,8 +31,10 @@ class EventController extends APIController
             return $check;
         }
         $event = $eventRepository->find($communityId);
+        $data = $eventNormalizer->normalize($event);
+        $data['members'] = $event->getMembers();
 
-        return new JsonResponse($eventNormalizer->normalize($event));
+        return $this->json($data, 200);
     }
 
     /**
@@ -62,15 +64,13 @@ class EventController extends APIController
         $community = $communityRepository->find($communityId);
         $event = new Event();
         $event->setData($data);
+        $event->setOrganizer($this->getUser());
         $event->setDate(date_create($data['date']));
         $em->persist($event);
         $community->addEvent($event);
         $em->flush();
 
-        return new JsonResponse([
-            'data' => $eventNormalizer->normalize($event),
-            'status' => 200
-        ]);
+        return $this->json($eventNormalizer->normalize($event), 200);
     }
 
     /**
@@ -96,13 +96,11 @@ class EventController extends APIController
         }
         $event = $eventRepository->find($eventId);
 
-        return new JsonResponse($event ?
-            $eventNormalizer->normalize($event)
-            :
-            [
-                'error' => 'event with this id not found',
-                'status' => 422
-            ]);
+        $test = array_slice($event->getMembers(), 0, 5);
+        $data = $eventNormalizer->normalize($event);
+        $data['last_members'] = $test;
+
+        return $this->json($data, 200);
     }
 
     /**
@@ -137,16 +135,7 @@ class EventController extends APIController
         $em->persist($event);
         $em->flush();
 
-        return new JsonResponse($event ?
-            [
-                'data' => ($eventNormalizer->normalize($event)),
-                'status' => 200
-            ]
-            :
-            [
-                'error' => 'event with this id not found',
-                'status' => 422
-            ]);
+        return $this->json($eventNormalizer->normalize($event), 200);
     }
 
     /**
@@ -168,16 +157,10 @@ class EventController extends APIController
         $em->remove($event);
         $em->flush();
 
-        return new JsonResponse($event ?
-            [
-                'success' => 'event successfully deleted',
-                'status' => 200
-            ]
-            :
-            [
-                'error' => 'event with this id not found',
-                'status' => 422
-            ]);
+        return $this->json([
+            'message' => 'event successfully deleted',
+            'success' => 'ok'
+        ], 200);
     }
 
     /**
@@ -199,16 +182,10 @@ class EventController extends APIController
         $event->removeMember($this->getUser());
         $em->flush();
 
-        return new JsonResponse($event ?
-            [
-                'success' => 'you left the event',
-                'status' => 200
-            ]
-            :
-            [
-                'error' => 'event with this id not found',
-                'status' => 422
-            ]);
+        return $this->json([
+            'message' => 'you left the event',
+            'success' => 'ok'
+        ], 200);
 
     }
 
@@ -231,16 +208,10 @@ class EventController extends APIController
         $event->addMember($this->getUser());
         $em->flush();
 
-        return new JsonResponse($event ?
-            [
-                'success' => 'you joined this event',
-                'status' => 200
-            ]
-            :
-            [
-                'error' => 'event with this id not found',
-                'status' => 422
-            ]);
+        return $this->json([
+                'message' => 'you joined this event',
+                'success' => 'ok'
+            ], 200);
 
     }
 }

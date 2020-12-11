@@ -25,7 +25,7 @@ class Event
     private $name;
 
     /**
-     * @ORM\Column(type="date")
+     * @ORM\Column(type="datetime")
      */
     private $date;
 
@@ -51,6 +51,7 @@ class Event
 
     /**
      * @ORM\ManyToMany(targetEntity=User::class, inversedBy="events")
+     * ORM\OrderBy({"id" = "DESC"})
      */
     private $members;
 
@@ -146,9 +147,17 @@ class Event
         return $this;
     }
 
-    public function getMembers(): Collection
+    public function getMembers()
     {
-        return $this->members;
+        return array_map(function (User $user) {
+            return [
+                'id' => $user->getId(),
+                'name' => $user->getFirstName(),
+                'phone' => $user->getPhone(),
+                'avatar' => $user->getAvatar()
+            ];
+        },
+            $this->members->toArray());
     }
 
     public function addMember(User $member): self
@@ -193,8 +202,7 @@ class Event
 
     public function setData($data)
     {
-        foreach ($data as $key => $value)
-        {
+        foreach ($data as $key => $value) {
             $this->$key = $value;
         }
     }

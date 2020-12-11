@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Event;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -17,6 +18,17 @@ class EventRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Event::class);
+    }
+
+    public function findByField($value, $field, $limit, $orderBy, $order)
+    {
+        return $this->createQueryBuilder('e')
+            ->andWhere("e.$field = :value")
+            ->setParameter('value', $value)
+            ->orderBy("e.$orderBy", $order)
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult();
     }
 
     // /**
