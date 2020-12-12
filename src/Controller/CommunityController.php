@@ -5,7 +5,6 @@ namespace App\Controller;
 use App\Entity\Community;
 use App\Repository\CommunityRepository;
 use App\Repository\EventRepository;
-use App\Repository\UserRepository;
 use App\Serializer\Normalizer\CommunityNormalizer;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -23,7 +22,7 @@ class CommunityController extends APIController
      */
     public function index(CommunityRepository $communityRepository, CommunityNormalizer $communityNormalizer)
     {
-        $communities = $communityRepository->findBy([],['id' => 'DESC']);
+        $communities = $communityRepository->findBy([], ['id' => 'DESC']);
 
         return $this->json(array_map(array($communityNormalizer, "normalize"), $communities));
     }
@@ -35,15 +34,11 @@ class CommunityController extends APIController
      * @param int $communityId
      * @param ValidatorInterface $validator
      * @return JsonResponse
-     * @throws \Symfony\Component\Serializer\Exception\ExceptionInterface
+     * @throws \Exception
      */
     public function show(CommunityRepository $communityRepository, CommunityNormalizer $communityNormalizer, int $communityId, ValidatorInterface $validator)
     {
-        $check = $this->validateGetParams($communityId, Community::class);
-
-        if ($check) {
-            return $check;
-        }
+        $this->validateGetParams($communityId, Community::class);
         $community = $communityRepository->find($communityId);
 
         return $this->json($communityNormalizer->normalize($community));
@@ -56,16 +51,17 @@ class CommunityController extends APIController
      * @param CommunityNormalizer $communityNormalizer
      * @param EntityManagerInterface $em
      * @return JsonResponse
-     * @throws \Symfony\Component\Serializer\Exception\ExceptionInterface
+     * @throws \Exception
      */
-    public function create(Request $request,CommunityNormalizer $communityNormalizer, EntityManagerInterface $em)
+    public function create(Request $request, CommunityNormalizer $communityNormalizer, EntityManagerInterface $em)
     {
         $data = json_decode($request->getContent(), true);
-
         $community = new Community();
-        $community->setIsOpen($data['is_open']);
-        $community->setName($data['name']);
-        isset($data['access']) ? $community->setAccess($data['access']) : false;
+        $community->setData($data);
+        if ($valid = $this->isValid($community)) {
+            return $valid;
+        }
+
         $em->persist($community);
         $em->flush();
 
@@ -83,7 +79,7 @@ class CommunityController extends APIController
      * @param CommunityNormalizer $communityNormalizer
      * @param int $communityId
      * @return JsonResponse
-     * @throws \Symfony\Component\Serializer\Exception\ExceptionInterface
+     * @throws \Exception
      */
     public function update(
         Request $request,
@@ -94,14 +90,13 @@ class CommunityController extends APIController
     )
     {
         $data = json_decode($request->getContent(), true);
-        $check = $this->validateGetParams($communityId, Community::class);
-
-        if ($check) {
-            return $check;
-        }
+        $this->validateGetParams($communityId, Community::class);
 
         $community = $communityRepository->find($communityId);
         $community->setData($data);
+        if ($valid = $this->isValid($community)) {
+            return $valid;
+        }
         $em->persist($community);
         $em->flush();
 
@@ -114,16 +109,12 @@ class CommunityController extends APIController
      * @param EntityManagerInterface $em
      * @param int $communityId
      * @return JsonResponse
+     * @throws \Exception
      */
     public function destroy(CommunityRepository $communityRepository, EntityManagerInterface $em, int $communityId)
     {
-        $check = $this->validateGetParams($communityId, Community::class);
-
-        if ($check) {
-            return $check;
-        }
+        $this->validateGetParams($communityId, Community::class);
         $community = $communityRepository->find($communityId);
-
         $em->remove($community);
         $em->flush();
 
@@ -139,15 +130,12 @@ class CommunityController extends APIController
      * @param EntityManagerInterface $em
      * @param int $communityId
      * @return JsonResponse
+     * @throws \Exception
      */
     public function leave(CommunityRepository $communityRepository, EntityManagerInterface $em, int $communityId)
     {
 
-        $check = $this->validateGetParams($communityId, Community::class);
-        if ($check) {
-            return $check;
-        }
-
+        $this->validateGetParams($communityId, Community::class);
         $community = $communityRepository->find($communityId);
         $community->removeUser($this->getUser());
         $em->flush();
@@ -166,18 +154,19 @@ class CommunityController extends APIController
      * @param EntityManagerInterface $em
      * @param int $communityId
      * @return JsonResponse
+     * @throws \Exception
      */
-    public function join(Request $request, CommunityRepository $communityRepository, EntityManagerInterface $em, int $communityId)
+    public function join(
+        Request $request,
+        CommunityRepository $communityRepository,
+        EntityManagerInterface $em,
+        int $communityId
+    )
     {
         $data = json_decode($request->getContent(), true);
-        $check = $this->validateGetParams($communityId, Community::class);
-        if ($check) {
-            return $check;
-        }
-
+        $this->validateGetParams($communityId, Community::class);
         $community = $communityRepository->find($communityId);
-        if($community->getAccess() !== ($data['access'] ?? null))
-        {
+        if ($community->getAccess() !== ($data['access'] ?? null)) {
             return $this->json([
                 'error' => 'incorrect code',
                 'status' => 422
@@ -198,13 +187,11 @@ class CommunityController extends APIController
      * @param EventRepository $eventRepository
      * @param int $communityId
      * @return JsonResponse
+     * @throws \Exception
      */
     public function upcomingEvents(EventRepository $eventRepository, int $communityId)
     {
-        $check = $this->validateGetParams($communityId, Community::class);
-        if ($check) {
-            return $check;
-        }
+        $this->validateGetParams($communityId, Community::class);
 
         return $this->json($eventRepository->findByField($communityId, 'community', 5, 'date', 'ASC'), 200);
     }

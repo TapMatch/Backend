@@ -2,7 +2,6 @@
 
 namespace App\Serializer\Normalizer;
 
-use App\Entity\Event;
 use App\Entity\User;
 use Symfony\Component\Serializer\Normalizer\CacheableSupportsMethodInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
@@ -17,6 +16,12 @@ class CommunityNormalizer implements NormalizerInterface, CacheableSupportsMetho
         $this->normalizer = $normalizer;
     }
 
+    /**
+     * @param $object
+     * @param null $format
+     * @param array $context
+     * @return array
+     */
     public function normalize($object, $format = null, array $context = []): array
     {
         return [

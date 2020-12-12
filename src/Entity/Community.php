@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=CommunityRepository::class)
@@ -22,6 +23,7 @@ class Community
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank
      */
     private $name;
 
@@ -37,11 +39,13 @@ class Community
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Assert\NotBlank
      */
     private $access;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Assert\NotBlank
      */
     private $city;
 
@@ -96,10 +100,10 @@ class Community
 
     public function setData($data)
     {
-        foreach ($data as $key => $value)
-        {
-            $this->$key = $value;
-        }
+        $this->setIsOpen($data['is_open'] ?? false);
+        $this->setName($data['name'] ?? false);
+        $this->setCity($data['city'] ?? false);
+        $this->setAccess($data['access'] ?? false);
     }
 
     public function getEvents()

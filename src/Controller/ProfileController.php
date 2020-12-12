@@ -51,16 +51,16 @@ class ProfileController extends AbstractController
                 $entityManager->persist($user);
                 $entityManager->flush();
             } else {
-                return new JsonResponse('file is no valid');
+                return $this->json('file is no valid');
             }
 
-            return new JsonResponse($user);
+            return $this->json($user, 200);
         }
 
-        return new JsonResponse([
+        return $this->json([
             'error' => 'file is empty',
             'status' => '422',
-        ]);
+        ], 422);
     }
 
     /**
@@ -82,11 +82,11 @@ class ProfileController extends AbstractController
         $entityManager->persist($user);
         $entityManager->flush();
 
-        return new JsonResponse([
+        return $this->json([
             'data' => $userNormalizer->normalize($user),
             'message' => 'success',
             'status' => 200
-        ]);
+        ], 200);
     }
 
     /**
@@ -106,11 +106,11 @@ class ProfileController extends AbstractController
         $entityManager->persist($user);
         $entityManager->flush();
 
-        return new JsonResponse([
+        return $this->json([
             'data' => $userNormalizer->normalize($user),
             'message' => 'success',
             'status' => 200
-        ]);
+        ], 200);
     }
 
     /**

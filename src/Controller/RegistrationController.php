@@ -3,41 +3,51 @@
 namespace App\Controller;
 
 use App\Entity\User;
-use App\Form\RegistrationFormType;
-use App\Security\TokenAuthenticator;
+use App\Repository\UserRepository;
 use Authy\AuthyApi;
 use Doctrine\ORM\EntityManagerInterface;
-use http\Env\Response;
-use function mysql_xdevapi\getSession;
+use Doctrine\ORM\EntityRepository;
+use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
-use Symfony\Component\Security\Guard\GuardAuthenticatorHandler;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class RegistrationController extends AbstractController
 {
     private $authyApi;
-    private $em;
 
-    public function __construct(EntityManagerInterface $entityManager)
+    public function __construct()
     {
-        $this->em = $entityManager;
         $this->authyApi = new AuthyApi('CF8gye42YbwBgeCoUMNPLdGKgxgVdzD7');
+    }
+
+    /**
+     * @return object|\Symfony\Component\Security\Core\User\UserInterface|null
+     * @throws Exception
+     */
+    public function getUser()
+    {
+        $user = $this->get('session')->get('user');
+        if (!$user) {
+            throw new Exception('incorrect PHPSESSID');
+        }
+
+        return $user;
     }
 
     /**
      * @Route("/login", name="app_login", methods={"POST"})
      * @param Request $request
      * @param ValidatorInterface $validator
+     * @param UserRepository $userRepository
+     * @param EntityManagerInterface $em
      * @return JsonResponse
      */
-    public function login(Request $request, ValidatorInterface $validator)
+    public function login(Request $request, ValidatorInterface $validator, UserRepository $userRepository, EntityManagerInterface $em)
     {
         $data = json_decode($request->getContent(), true);
-        $em = $this->getDoctrine()->getManager();
         $newUser = new User();
         $newUser->setPhone($data['phone'] ?? false);
         $newUser->setCountryCode($data['country_code'] ?? false);
@@ -47,8 +57,7 @@ class RegistrationController extends AbstractController
             $errors = [];
 
             if (isset($violations[0]->getConstraint()->service)) {
-                $userRep = $em->getRepository(User::class);
-                $user = $userRep->findOneBy(['phone' => $data['phone']]);
+                $user = $userRepository->findOneBy(['phone' => $data['phone']]);
 
                 return $this->sendSMS($user);
             }
@@ -57,7 +66,7 @@ class RegistrationController extends AbstractController
                 $errors[$violation->getPropertyPath()] = $violation->getMessage();
             }
 
-            return new JsonResponse($errors);
+            return $this->json($errors, 422);
         } else {
             $authyApiUser = $this->authyApi->registerUser('test@test.com', $data['phone'], $data['country_code'], false);
 
@@ -73,70 +82,75 @@ class RegistrationController extends AbstractController
                 return $this->sendSMS($newUser);
             }
 
-            return new JsonResponse($authyApiUser->errors());
+            return $this->json($authyApiUser->errors(), 422);
         }
     }
 
+    /**
+     * @param $user
+     * @return JsonResponse
+     */
     public function sendSMS($user)
     {
         $sms = $this->authyApi->requestSms($user->getAuthyId(), ['force' => true]);
+
         if ($sms->ok()) {
             $this->get('session')->set('user', $user);
 
-            return new JsonResponse([
+            return $this->json([
                 'data' => [
                     'phone' => $user->getPhone()
                 ],
                 'Cookie' => 'PHPSESSID=' . session_id()
-            ]);
+            ], 200);
         }
 
-        return new JsonResponse($sms->errors());
+        return $this->json($sms->message(), 400);
 
     }
 
     /**
      * @Route("/verify/resend", name="resend_code", methods={"POST"})
      * @return JsonResponse
+     * @throws Exception
      */
     public function resendCode()
     {
-        $user = $this->get('session')->get('user');
+        $user = $this->getUser();
 
-        return $sms = $this->sendSMS($user);
+        return $this->sendSMS($user);
     }
 
     /**
      * @Route("/verify/code", name="verify_code", methods={"POST"})
      * @param Request $request
+     * @param UserRepository $userRepository
+     * @param EntityManagerInterface $em
      * @return JsonResponse
+     * @throws Exception
      */
-    public function verifyCode(Request $request)
+    public function verifyCode(Request $request, UserRepository $userRepository, EntityManagerInterface $em)
     {
         $code = json_decode($request->getContent(), true);
 
-        try {
-            // Get data from session
-            $data = $this->get('session')->get('user');
-            $verification = $this->authyApi->verifyToken($data->getAuthyId(), $code['verify_code']);
-            if ($verification->ok()) {
-                $user = $this->em->getRepository(User::class)->findOneBy(['phone' => $data->getPhone()]) ?? $data;
+        // Get data from session
+        $data = $this->getUser();
 
-                # Create new API key (token)
-                $token = bin2hex(random_bytes(16));
-                $user->setApiToken($token);
-                $user->setLastLogin(new \DateTime());
-                $this->em->persist($user);
-                $this->em->flush();
+        $verification = $this->authyApi->verifyToken($data->getAuthyId(), $code['verify_code']);
+        if ($verification->ok()) {
+            $user = $userRepository->findOneBy(['phone' => $data->getPhone()]) ?? $data;
 
-                return new JsonResponse($user->getApiToken());
-            }
+            # Create new API key (token)
+            $token = bin2hex(random_bytes(16));
+            $user->setApiToken($token);
+            $user->setLastLogin(new \DateTime());
+            $em->persist($user);
+            $em->flush();
 
-            return new JsonResponse($verification->errors());
-
-        } catch (\Exception $exception) {
-
-            return new JsonResponse(['error' => 'Verification code is incorrect']);
+            return $this->json($user->getApiToken(), 200);
         }
+
+        return $this->json($verification->errors(), 422);
+
     }
 }

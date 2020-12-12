@@ -22,14 +22,11 @@ class EventController extends APIController
      * @param $communityId
      * @return Response
      * @throws \Symfony\Component\Serializer\Exception\ExceptionInterface
+     * @throws \Exception
      */
-    public function index(EventRepository $eventRepository, EventNormalizer $eventNormalizer, $communityId)
+    public function index(EventRepository $eventRepository, EventNormalizer $eventNormalizer, int $communityId)
     {
-        $check = $this->validateGetParams($communityId, Community::class);
-
-        if ($check) {
-            return $check;
-        }
+        $this->validateGetParams($communityId, Community::class);
         $event = $eventRepository->find($communityId);
         $data = $eventNormalizer->normalize($event);
         $data['members'] = $event->getMembers();
@@ -46,6 +43,7 @@ class EventController extends APIController
      * @param int $communityId
      * @return JsonResponse
      * @throws \Symfony\Component\Serializer\Exception\ExceptionInterface
+     * @throws \Exception
      */
     public function create(
         Request $request,
@@ -56,16 +54,14 @@ class EventController extends APIController
     )
     {
         $data = json_decode($request->getContent(), true);
-        $check = $this->validateGetParams($communityId, Community::class);
-
-        if ($check) {
-            return $check;
-        }
+        $this->validateGetParams($communityId, Community::class);
         $community = $communityRepository->find($communityId);
         $event = new Event();
+        $data['user'] = $this->getUser();
         $event->setData($data);
-        $event->setOrganizer($this->getUser());
-        $event->setDate(date_create($data['date']));
+        if ($valid = $this->isValid($event)) {
+            return $valid;
+        }
         $em->persist($event);
         $community->addEvent($event);
         $em->flush();
@@ -81,6 +77,7 @@ class EventController extends APIController
      * @param int $eventId
      * @return JsonResponse
      * @throws \Symfony\Component\Serializer\Exception\ExceptionInterface
+     * @throws \Exception
      */
     public function show(
         EventRepository $eventRepository,
@@ -89,16 +86,13 @@ class EventController extends APIController
         int $eventId
     )
     {
-        $check = $this->validateGetParams($communityId, Community::class);
-
-        if ($check) {
-            return $check;
-        }
+        $this->validateGetParams($communityId, Community::class);
+        $this->validateGetParams($eventId, Event::class);
         $event = $eventRepository->find($eventId);
 
-        $test = array_slice($event->getMembers(), 0, 5);
+        $lastMembers = array_slice($event->getMembers(), 0, 5);
         $data = $eventNormalizer->normalize($event);
-        $data['last_members'] = $test;
+        $data['last_members'] = $lastMembers;
 
         return $this->json($data, 200);
     }
@@ -113,6 +107,7 @@ class EventController extends APIController
      * @param int $eventId
      * @return JsonResponse
      * @throws \Symfony\Component\Serializer\Exception\ExceptionInterface
+     * @throws \Exception
      */
     public function update(
         Request $request,
@@ -125,13 +120,14 @@ class EventController extends APIController
     {
         $data = json_decode($request->getContent(), true);
 
-        $check = $this->validateGetParams($communityId, Community::class);
+        $this->validateGetParams($communityId, Community::class);
+        $this->validateGetParams($eventId, Event::class);
 
-        if ($check) {
-            return $check;
-        }
         $event = $eventRepository->find($eventId);
         $event->setData($data);
+        if ($valid = $this->isValid($event)) {
+            return $valid;
+        }
         $em->persist($event);
         $em->flush();
 
@@ -145,21 +141,19 @@ class EventController extends APIController
      * @param int $communityId
      * @param int $eventId
      * @return JsonResponse
+     * @throws \Exception
      */
     public function destroy(EventRepository $eventRepository, EntityManagerInterface $em, int $communityId, int $eventId)
     {
-        $check = $this->validateGetParams($communityId, Community::class);
+        $this->validateGetParams($communityId, Community::class);
+        $this->validateGetParams($eventId, Event::class);
 
-        if ($check) {
-            return $check;
-        }
         $event = $eventRepository->find($eventId);
         $em->remove($event);
         $em->flush();
 
         return $this->json([
             'message' => 'event successfully deleted',
-            'success' => 'ok'
         ], 200);
     }
 
@@ -170,21 +164,19 @@ class EventController extends APIController
      * @param int $communityId
      * @param int $eventId
      * @return JsonResponse
+     * @throws \Exception
      */
     public function leave(EventRepository $eventRepository, EntityManagerInterface $em, int $communityId, int $eventId)
     {
-        $check = $this->validateGetParams($communityId, Community::class);
+        $this->validateGetParams($communityId, Community::class);
+        $this->validateGetParams($eventId, Event::class);
 
-        if ($check) {
-            return $check;
-        }
         $event = $eventRepository->find($eventId);
         $event->removeMember($this->getUser());
         $em->flush();
 
         return $this->json([
-            'message' => 'you left the event',
-            'success' => 'ok'
+            'message' => 'you left the event'
         ], 200);
 
     }
@@ -196,22 +188,20 @@ class EventController extends APIController
      * @param int $communityId
      * @param int $eventId
      * @return JsonResponse
+     * @throws \Exception
      */
     public function join(EventRepository $eventRepository, EntityManagerInterface $em, int $communityId, int $eventId)
     {
-        $check = $this->validateGetParams($communityId, Community::class);
+        $this->validateGetParams($communityId, Community::class);
+        $this->validateGetParams($eventId, Event::class);
 
-        if ($check) {
-            return $check;
-        }
         $event = $eventRepository->find($eventId);
         $event->addMember($this->getUser());
         $em->flush();
 
         return $this->json([
-                'message' => 'you joined this event',
-                'success' => 'ok'
-            ], 200);
+            'message' => 'you joined this event'
+        ], 200);
 
     }
 }

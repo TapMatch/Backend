@@ -6,6 +6,7 @@ use App\Repository\EventRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=EventRepository::class)
@@ -21,31 +22,38 @@ class Event
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank
      */
     private $name;
 
     /**
      * @ORM\Column(type="datetime")
+     * @Assert\NotBlank
+     * @Assert\DateTime
      */
     private $date;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank
      */
     private $address;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank
      */
     private $coordinates;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank
      */
     private $description;
 
     /**
      * @ORM\Column(type="integer")
+     * @Assert\NotBlank
      */
     private $join_limit;
 
@@ -92,7 +100,7 @@ class Event
         return $this->date;
     }
 
-    public function setDate(\DateTimeInterface $date): self
+    public function setDate($date): self
     {
         $this->date = $date;
 
@@ -202,8 +210,12 @@ class Event
 
     public function setData($data)
     {
-        foreach ($data as $key => $value) {
-            $this->$key = $value;
-        }
+        $this->setName($data['name'] ?? false);
+        $this->setAddress($data['address'] ?? false);
+        $this->setCoordinates($data['coordinates'] ?? false);
+        $this->setDescription($data['description'] ?? false);
+        $this->setJoinLimit($data['join_limit'] ?? false);
+        $this->setOrganizer($data['user'] ?? null);
+        $this->setDate(\DateTime::createFromFormat('Y-m-d H:i',$data['date']) ?? false);
     }
 }

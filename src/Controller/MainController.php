@@ -14,7 +14,7 @@ class MainController extends AbstractController
      */
     public function index(): Response
     {
-        return new JsonResponse('');
+        return $this->json('');
     }
 
     /**
@@ -22,6 +22,6 @@ class MainController extends AbstractController
      */
     public function tokentest()
     {
-        return new JsonResponse($this->getUser());
+        return $this->json($this->getUser());
     }
 }

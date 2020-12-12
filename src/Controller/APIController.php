@@ -2,32 +2,58 @@
 
 namespace App\Controller;
 
+use App\Entity\Community;
 use App\Validator\Exists;
+use Exception;
+use http\Client\Response;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 abstract class APIController extends AbstractController
 {
     private $validator;
 
+    /**
+     * APIController constructor.
+     * @param ValidatorInterface $validator
+     */
     public function __construct(ValidatorInterface $validator)
     {
         $this->validator = $validator;
     }
 
+    /**
+     * @param $id
+     * @param $entity
+     * @return bool|\Symfony\Component\HttpFoundation\JsonResponse
+     * @throws Exception
+     */
     public function validateGetParams($id, $entity)
     {
-        $Constraint = new Exists(['entity' => $entity]);
-        $errors = $this->validator->validate($id, $Constraint);
+        $constraint = new Exists(['entity' => $entity]);
+        $errors = $this->validator->validate($id, $constraint);
         if (count($errors)) {
-            return $this->json([
-                'error' => $errors[0]->getMessage(),
-                'status' => 422
-            ]);
+            throw new Exception($errors[0]->getMessage(), 422);
         }
 
-        return false;
+        return true;
+    }
+
+    /**
+     * @param $data
+     * @return JsonResponse
+     */
+    public function isValid($data)
+    {
+        $violations = $this->validator->validate($data);
+        if (count($violations) > 0) {
+            $errors = [];
+            foreach ($violations as $violation) {
+                $errors[$violation->getPropertyPath()] = $violation->getMessage();
+            }
+
+            return $this->json($errors, 422);
+        }
     }
 }
