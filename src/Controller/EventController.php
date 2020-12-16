@@ -190,7 +190,7 @@ class EventController extends APIController
      * @return JsonResponse
      * @throws \Exception
      */
-    public function join(EventRepository $eventRepository, EntityManagerInterface $em, int $communityId, int $eventId)
+    public function join(EventRepository $eventRepository, EntityManagerInterface $em, Community $communityId, int $eventId)
     {
         $this->validateGetParams($communityId, Community::class);
         $this->validateGetParams($eventId, Event::class);

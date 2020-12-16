@@ -10,7 +10,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class CommunityController extends APIController
 {
@@ -32,11 +31,10 @@ class CommunityController extends APIController
      * @param CommunityRepository $communityRepository
      * @param CommunityNormalizer $communityNormalizer
      * @param int $communityId
-     * @param ValidatorInterface $validator
      * @return JsonResponse
      * @throws \Exception
      */
-    public function show(CommunityRepository $communityRepository, CommunityNormalizer $communityNormalizer, int $communityId, ValidatorInterface $validator)
+    public function show(CommunityRepository $communityRepository, CommunityNormalizer $communityNormalizer, int $communityId)
     {
         $this->validateGetParams($communityId, Community::class);
         $community = $communityRepository->find($communityId);
@@ -148,7 +146,7 @@ class CommunityController extends APIController
     }
 
     /**
-     * @Route("/api/communities/{communityId}/join", methods={"POST"})
+     * @Route("/api/communities/{communityId}/join", methods="POST", requirements={"id":"\d+"})
      * @param Request $request
      * @param CommunityRepository $communityRepository
      * @param EntityManagerInterface $em

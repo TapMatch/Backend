@@ -116,9 +116,7 @@ class RegistrationController extends AbstractController
      */
     public function resendCode()
     {
-        $user = $this->getUser();
-
-        return $this->sendSMS($user);
+        return $this->sendSMS($this->getUser());
     }
 
     /**
@@ -150,7 +148,6 @@ class RegistrationController extends AbstractController
             return $this->json($user->getApiToken(), 200);
         }
 
-        return $this->json($verification->errors(), 422);
-
+        return $this->json(['error' => $verification->message()], 422);
     }
 }
