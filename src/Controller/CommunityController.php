@@ -30,17 +30,16 @@ class CommunityController extends APIController
      * @Route("/api/communities/{communityId}", methods={"GET"})
      * @param CommunityRepository $communityRepository
      * @param CommunityNormalizer $communityNormalizer
-     * @param int $communityId
+     * @param Community $communityId
      * @return JsonResponse
      * @throws \Exception
      */
-    public function show(CommunityRepository $communityRepository, CommunityNormalizer $communityNormalizer, int $communityId)
+    public function show(CommunityRepository $communityRepository, CommunityNormalizer $communityNormalizer, Community $communityId)
     {
-        $this->validateGetParams($communityId, Community::class);
+        $this->memberExists($communityId, $this->getUser());
         $community = $communityRepository->find($communityId);
 
         return $this->json($communityNormalizer->normalize($community));
-
     }
 
     /**
@@ -51,15 +50,12 @@ class CommunityController extends APIController
      * @return JsonResponse
      * @throws \Exception
      */
-    public function create(Request $request, CommunityNormalizer $communityNormalizer, EntityManagerInterface $em)
+    public function store(Request $request, CommunityNormalizer $communityNormalizer, EntityManagerInterface $em)
     {
         $data = json_decode($request->getContent(), true);
         $community = new Community();
         $community->setData($data);
-        if ($valid = $this->isValid($community)) {
-            return $valid;
-        }
-
+        $this->isValid($community);
         $em->persist($community);
         $em->flush();
 
@@ -87,14 +83,14 @@ class CommunityController extends APIController
         int $communityId
     )
     {
-        $data = json_decode($request->getContent(), true);
         $this->validateGetParams($communityId, Community::class);
+        $data = json_decode($request->getContent(), true);
+        $this->memberExists($communityId, $this->getUser());
 
         $community = $communityRepository->find($communityId);
         $community->setData($data);
-        if ($valid = $this->isValid($community)) {
-            return $valid;
-        }
+        $this->isValid($community);
+
         $em->persist($community);
         $em->flush();
 
@@ -112,6 +108,7 @@ class CommunityController extends APIController
     public function destroy(CommunityRepository $communityRepository, EntityManagerInterface $em, int $communityId)
     {
         $this->validateGetParams($communityId, Community::class);
+        $this->memberExists($communityId, $this->getUser());
         $community = $communityRepository->find($communityId);
         $em->remove($community);
         $em->flush();
@@ -134,6 +131,7 @@ class CommunityController extends APIController
     {
 
         $this->validateGetParams($communityId, Community::class);
+        $this->memberExists($communityId, $this->getUser());
         $community = $communityRepository->find($communityId);
         $community->removeUser($this->getUser());
         $em->flush();
@@ -163,10 +161,11 @@ class CommunityController extends APIController
     {
         $data = json_decode($request->getContent(), true);
         $this->validateGetParams($communityId, Community::class);
+        $this->memberExists($communityId, $this->getUser());
         $community = $communityRepository->find($communityId);
         if ($community->getAccess() !== ($data['access'] ?? null)) {
             return $this->json([
-                'error' => 'incorrect code',
+                'error' => 'incorrect access code',
                 'status' => 422
             ]);
         }
@@ -190,6 +189,7 @@ class CommunityController extends APIController
     public function upcomingEvents(EventRepository $eventRepository, int $communityId)
     {
         $this->validateGetParams($communityId, Community::class);
+        $this->memberExists($communityId, $this->getUser());
 
         return $this->json($eventRepository->findByField($communityId, 'community', 5, 'date', 'ASC'), 200);
     }

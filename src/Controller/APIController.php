@@ -3,7 +3,9 @@
 namespace App\Controller;
 
 use App\Entity\Community;
+use App\Repository\CommunityRepository;
 use App\Validator\Exists;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Exception;
 use http\Client\Response;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -24,25 +26,30 @@ abstract class APIController extends AbstractController
     }
 
     /**
-     * @param $id
-     * @param $entity
-     * @return bool|\Symfony\Component\HttpFoundation\JsonResponse
+     * @param array $data
+     * @return void
      * @throws Exception
      */
-    public function validateGetParams($id, $entity)
+    public function validateGetParams(...$data)
     {
-        $constraint = new Exists(['entity' => $entity]);
-        $errors = $this->validator->validate($id, $constraint);
-        if (count($errors)) {
-            throw new Exception($errors[0]->getMessage(), 422);
-        }
+        $data = array_chunk($data, 2);
+        $errors = array_map(function ($item){
+            $constraint = new Exists(['entity' => $item[1]]);
+            return $errors[] = $this->validator->validate($item[0], $constraint);
+        }, $data);
+        if (count($errors[0])) {
+            $response = array_map(function ($error){
+                return $error[0]->getMessage();
+            }, $errors);
 
-        return true;
+            throw new Exception(json_encode($response), 422);
+        }
     }
 
     /**
      * @param $data
-     * @return JsonResponse
+     * @return void
+     * @throws Exception
      */
     public function isValid($data)
     {
@@ -53,7 +60,20 @@ abstract class APIController extends AbstractController
                 $errors[$violation->getPropertyPath()] = $violation->getMessage();
             }
 
-            return $this->json($errors, 422);
+            throw new Exception(json_encode($errors), 422);
+        }
+    }
+
+    /**
+     * @param $id
+     * @param $member
+     * @throws Exception
+     */
+    public function memberExists($id, $member)
+    {
+        if(!in_array($member, $this->getDoctrine()->getRepository(Community::class)->find($id)->getUsers()->toArray()))
+        {
+           throw new Exception(json_encode('permission denied'), 400);
         }
     }
 }

@@ -7,6 +7,7 @@ use App\Repository\UserRepository;
 use App\Serializer\Normalizer\UserNormalizer;
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Asset\Packages;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -120,10 +121,12 @@ class ProfileController extends AbstractController
      * @return JsonResponse
      * @throws \Symfony\Component\Serializer\Exception\ExceptionInterface
      */
-    public function getProfile(UserRepository $userRepository, UserNormalizer $userNormalizer)
+    public function getProfile(Request $request, UserRepository $userRepository, UserNormalizer $userNormalizer)
     {
         $user = $userRepository->find($this->getUser());
+        $data = $userNormalizer->normalize($user);
+        $data['avatar'] = $request->getUriForPath($data['avatar']);
 
-        return $this->json($userNormalizer->normalize($user));
+        return $this->json($data);
     }
 }

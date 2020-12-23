@@ -45,7 +45,7 @@ class EventController extends APIController
      * @throws \Symfony\Component\Serializer\Exception\ExceptionInterface
      * @throws \Exception
      */
-    public function create(
+    public function store(
         Request $request,
         CommunityRepository $communityRepository,
         EntityManagerInterface $em,
@@ -86,8 +86,7 @@ class EventController extends APIController
         int $eventId
     )
     {
-        $this->validateGetParams($communityId, Community::class);
-        $this->validateGetParams($eventId, Event::class);
+        $this->validateGetParams($communityId, Community::class, $eventId, Event::class);
         $event = $eventRepository->find($eventId);
 
         $lastMembers = array_slice($event->getMembers(), 0, 5);

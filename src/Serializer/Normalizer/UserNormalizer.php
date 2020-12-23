@@ -22,7 +22,7 @@ class UserNormalizer implements NormalizerInterface, CacheableSupportsMethodInte
         return [
             'id' => $object->getId(),
             'name' => $object->getFirstName(),
-            'avatar' => $object->getAvatar(),
+            'avatar' => '/assets/img/avatar/' . $object->getAvatar(),
             'phone' => $object->getPhone(),
             'finished_onboarding' => $object->getFinishedOnboarding(),
             'events' => array_map(function (Event $event) {
@@ -39,14 +39,17 @@ class UserNormalizer implements NormalizerInterface, CacheableSupportsMethodInte
                 $object->getEvents()->toArray())
 
             ,
-            'communities' => array_map(function (Community $community) {
-                return [
-                    'id' => $community->getId(),
-                    'name' => $community->getName(),
-                    'access' => $community->getAccess(),
-                ];
-            },
-                $object->getCommunities()->toArray())
+            'communities' => [
+                array_map(function (Community $community) {
+                    return [
+                        'id' => $community->getId(),
+                        'name' => $community->getName(),
+                        'access' => $community->getAccess(),
+                        'count' => $community->getUsers()->count()
+                    ];
+                },
+                    $object->getCommunities()->toArray())
+            ]
         ];
     }
 
