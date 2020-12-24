@@ -15,17 +15,20 @@ class ApiExceptionListener implements EventSubscriberInterface
      */
     public function onKernelException(ExceptionEvent $event)
     {
-        $request = (array)$event->getRequest();
+        $error = $event->getThrowable()->getMessage();
+        $check = $this->isJson($error);
         $response = new JsonResponse([
-            'error' => $event->getThrowable()->getMessage()
+            'error' => $check ? json_decode($error) : $error
         ],
             $event->getThrowable()->getCode() ?: 500
         );
 
-        if(in_array('application/json', $request))
-        {
-            $event->setResponse($response);
-        }
+        $event->setResponse($response);
+    }
+
+    function isJson($string) {
+        json_decode($string);
+        return (json_last_error() == JSON_ERROR_NONE);
     }
 
     public static function getSubscribedEvents()

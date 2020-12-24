@@ -162,7 +162,7 @@ class Event
                 'id' => $user->getId(),
                 'name' => $user->getFirstName(),
                 'phone' => $user->getPhone(),
-                'avatar' => $user->getAvatar()
+                'avatar' => $user->getAvatar() ? '/assets/img/avatar/' . $user->getAvatar() : ''
             ];
         },
             $this->members->toArray());

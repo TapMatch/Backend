@@ -45,9 +45,20 @@ class RegistrationController extends AbstractController
      * @param EntityManagerInterface $em
      * @return JsonResponse
      */
-    public function login(Request $request, ValidatorInterface $validator, UserRepository $userRepository, EntityManagerInterface $em)
+    public function login(
+        Request $request,
+        ValidatorInterface $validator,
+        UserRepository $userRepository,
+        EntityManagerInterface $em
+    )
     {
         $data = json_decode($request->getContent(), true);
+        $check = $userRepository->findOneBy(['phone' => $data['phone']]);
+
+        if ($check) {
+            return $this->sendSMS($check);
+        }
+
         $newUser = new User();
         $newUser->setPhone($data['phone'] ?? false);
         $newUser->setCountryCode($data['country_code'] ?? false);
@@ -55,13 +66,6 @@ class RegistrationController extends AbstractController
 
         if (count($violations) > 0) {
             $errors = [];
-
-            if (isset($violations[0]->getConstraint()->service)) {
-                $user = $userRepository->findOneBy(['phone' => $data['phone']]);
-
-                return $this->sendSMS($user);
-            }
-
             foreach ($violations as $violation) {
                 $errors[$violation->getPropertyPath()] = $violation->getMessage();
             }
@@ -82,7 +86,7 @@ class RegistrationController extends AbstractController
                 return $this->sendSMS($newUser);
             }
 
-            return $this->json($authyApiUser->errors(), 422);
+            return $this->json($authyApiUser->message(), 422);
         }
     }
 
@@ -133,21 +137,22 @@ class RegistrationController extends AbstractController
 
         // Get data from session
         $data = $this->getUser();
+        if($data) {
+            $verification = $this->authyApi->verifyToken($data->getAuthyId(), $code['verify_code']);
+            if ($verification->ok()) {
+                $user = $userRepository->findOneBy(['phone' => $data->getPhone()]) ?? $data;
 
-        $verification = $this->authyApi->verifyToken($data->getAuthyId(), $code['verify_code']);
-        if ($verification->ok()) {
-            $user = $userRepository->findOneBy(['phone' => $data->getPhone()]) ?? $data;
+                # Create new API key (token)
+                $token = bin2hex(random_bytes(16));
+                $user->setApiToken($token);
+                $user->setLastLogin(new \DateTime());
+                $em->persist($user);
+                $em->flush();
 
-            # Create new API key (token)
-            $token = bin2hex(random_bytes(16));
-            $user->setApiToken($token);
-            $user->setLastLogin(new \DateTime());
-            $em->persist($user);
-            $em->flush();
-
-            return $this->json($user->getApiToken(), 200);
+                return $this->json($user->getApiToken(), 200);
+            }
         }
 
-        return $this->json(['error' => $verification->message()], 422);
+        return $this->json(['error' => !empty($data) ? $verification->message() : 'Incorrect PHPSESSID'], 422);
     }
 }

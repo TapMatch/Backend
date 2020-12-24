@@ -8,6 +8,7 @@ use App\Validator\Exists;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Exception;
 use http\Client\Response;
+use function MongoDB\BSON\toJSON;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -26,28 +27,23 @@ abstract class APIController extends AbstractController
     }
 
     /**
-     * @param array $data
+     * @param $id
+     * @param $entity
      * @return void
      * @throws Exception
      */
-    public function validateGetParams(...$data)
+    public function validateGetParams($id, $entity)
     {
-        $data = array_chunk($data, 2);
-        $errors = array_map(function ($item){
-            $constraint = new Exists(['entity' => $item[1]]);
-            return $errors[] = $this->validator->validate($item[0], $constraint);
-        }, $data);
-        if (count($errors[0])) {
-            $response = array_map(function ($error){
-                return $error[0]->getMessage();
-            }, $errors);
-
-            throw new Exception(json_encode($response), 422);
+            $constraint = new Exists(['entity' => $entity]);
+            $errors = $this->validator->validate($id, $constraint);
+        if (count($errors)) {
+            throw new Exception($errors[0]->getMessage(), 422);
         }
     }
 
     /**
      * @param $data
+     * @param bool $constraint
      * @return void
      * @throws Exception
      */
@@ -57,7 +53,7 @@ abstract class APIController extends AbstractController
         if (count($violations) > 0) {
             $errors = [];
             foreach ($violations as $violation) {
-                $errors[$violation->getPropertyPath()] = $violation->getMessage();
+                $errors[$violation->getPropertyPath() ?: 'Exists'] = $violation->getMessage();
             }
 
             throw new Exception(json_encode($errors), 422);

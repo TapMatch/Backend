@@ -13,6 +13,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
+/**
+ * @Route(requirements={"communityId"="\d+", "eventId"="\d+"})
+ */
 class EventController extends APIController
 {
     /**
@@ -59,9 +62,8 @@ class EventController extends APIController
         $event = new Event();
         $data['user'] = $this->getUser();
         $event->setData($data);
-        if ($valid = $this->isValid($event)) {
-            return $valid;
-        }
+        $this->isValid($event);
+
         $em->persist($event);
         $community->addEvent($event);
         $em->flush();
@@ -70,7 +72,8 @@ class EventController extends APIController
     }
 
     /**
-     * @Route("/api/communities/{communityId}/events/{eventId}", methods={"GET"})
+     * @Route("/api/communities/{communityId}/events/{eventId}/", methods={"GET"})
+     * @param Request $request
      * @param EventRepository $eventRepository
      * @param EventNormalizer $eventNormalizer
      * @param int $communityId
@@ -80,16 +83,24 @@ class EventController extends APIController
      * @throws \Exception
      */
     public function show(
+        Request $request,
         EventRepository $eventRepository,
         EventNormalizer $eventNormalizer,
         int $communityId,
         int $eventId
     )
     {
-        $this->validateGetParams($communityId, Community::class, $eventId, Event::class);
+        $this->validateGetParams($communityId, Community::class);
+        $this->validateGetParams($eventId, Event::class);
         $event = $eventRepository->find($eventId);
-
         $lastMembers = array_slice($event->getMembers(), 0, 5);
+        array_walk($lastMembers, function (&$member) use ($request) {
+            if($member['avatar']) {
+                $avatar = $request->getUriForPath($member['avatar']);
+                unset($member['avatar']);
+                $member['avatar'] = $avatar;
+            }
+        });
         $data = $eventNormalizer->normalize($event);
         $data['last_members'] = $lastMembers;
 
@@ -124,9 +135,8 @@ class EventController extends APIController
 
         $event = $eventRepository->find($eventId);
         $event->setData($data);
-        if ($valid = $this->isValid($event)) {
-            return $valid;
-        }
+        $this->isValid($event);
+
         $em->persist($event);
         $em->flush();
 
