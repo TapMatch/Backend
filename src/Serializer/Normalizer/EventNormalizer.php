@@ -37,7 +37,11 @@ class EventNormalizer implements NormalizerInterface, CacheableSupportsMethodInt
             'description' => $object->getDescription(),
             'join_limit' => $object->getJoinLimit(),
             'joined' => count($object->getMembers()),
-            'organizer' => $object->getOrganizer()->getId(),
+            'organizer' => [
+                'id' => $object->getOrganizer()->getId(),
+                'name' => $object->getOrganizer()->getFirstName(),
+                'avatar' => $object->getOrganizer()->getAvatar() ? $this->requestStack->getCurrentRequest()->getUriForPath($object->getOrganizer()->getAvatar()): null,
+                ],
             'members' => array_map(function (User $user) use ($context) {
                 return [
                     'id' => $user->getId(),
