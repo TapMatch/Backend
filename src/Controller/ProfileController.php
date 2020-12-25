@@ -2,10 +2,7 @@
 
 namespace App\Controller;
 
-use App\Entity\User;
 use App\Repository\UserRepository;
-use App\Serializer\Normalizer\UserNormalizer;
-use Doctrine\Persistence\ObjectManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -43,7 +40,7 @@ class ProfileController extends AbstractController
                 $uploadsBaseUrl = 'assets/img/avatar/';
 
                 $uniqid = md5(uniqid());
-                $fileNewName = $uniqid . '.' . $fileFormat;
+                $fileNewName = '/assets/img/avatar/' . $uniqid . '.' . $fileFormat;
                 $file->move($uploadsBaseUrl, $fileNewName);
 
                 $user->setAvatar($fileNewName);
@@ -68,11 +65,9 @@ class ProfileController extends AbstractController
      * @param Request $request
      * @param EntityManagerInterface $entityManager
      * @param UserRepository $userRepository
-     * @param UserNormalizer $userNormalizer
      * @return JsonResponse
-     * @throws \Symfony\Component\Serializer\Exception\ExceptionInterface
      */
-    public function updateProfile(Request $request, EntityManagerInterface $entityManager, UserRepository $userRepository, UserNormalizer $userNormalizer)
+    public function updateProfile(Request $request, EntityManagerInterface $entityManager, UserRepository $userRepository)
     {
         $data = json_decode($request->getContent(), true);
         $user = $userRepository->find($this->getUser());
@@ -83,7 +78,7 @@ class ProfileController extends AbstractController
         $entityManager->flush();
 
         return $this->json([
-            'data' => $userNormalizer->normalize($user),
+            'data' => $user,
             'message' => 'success',
             'status' => 200
         ], 200);
@@ -94,11 +89,9 @@ class ProfileController extends AbstractController
      * @param Request $request
      * @param EntityManagerInterface $entityManager
      * @param UserRepository $userRepository
-     * @param UserNormalizer $userNormalizer
      * @return JsonResponse
-     * @throws \Symfony\Component\Serializer\Exception\ExceptionInterface
      */
-    public function setName(Request $request, EntityManagerInterface $entityManager, UserRepository $userRepository, UserNormalizer $userNormalizer)
+    public function setName(Request $request, EntityManagerInterface $entityManager, UserRepository $userRepository)
     {
         $data = json_decode($request->getContent(), true);
         $user = $userRepository->find($this->getUser());
@@ -107,7 +100,7 @@ class ProfileController extends AbstractController
         $entityManager->flush();
 
         return $this->json([
-            'data' => $userNormalizer->normalize($user),
+            'data' => $user,
             'message' => 'success',
             'status' => 200
         ], 200);
@@ -115,18 +108,13 @@ class ProfileController extends AbstractController
 
     /**
      * @Route("/api/profile", methods={"GET"})
-     * @param Request $request
      * @param UserRepository $userRepository
-     * @param UserNormalizer $userNormalizer
      * @return JsonResponse
-     * @throws \Symfony\Component\Serializer\Exception\ExceptionInterface
      */
-    public function getProfile(Request $request, UserRepository $userRepository, UserNormalizer $userNormalizer)
+    public function getProfile(UserRepository $userRepository)
     {
         $user = $userRepository->find($this->getUser());
-        $data = $userNormalizer->normalize($user);
-        $data['avatar'] = $request->getUriForPath($data['avatar']);
 
-        return $this->json($data);
+        return $this->json($user);
     }
 }

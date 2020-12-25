@@ -4,6 +4,7 @@ namespace App\Serializer\Normalizer;
 
 use App\Entity\Community;
 use App\Entity\Event;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Serializer\Normalizer\CacheableSupportsMethodInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
@@ -12,9 +13,12 @@ class UserNormalizer implements NormalizerInterface, CacheableSupportsMethodInte
 {
     private $normalizer;
 
-    public function __construct(ObjectNormalizer $normalizer)
+    private $requestStack;
+
+    public function __construct(ObjectNormalizer $normalizer, RequestStack $requestStack)
     {
         $this->normalizer = $normalizer;
+        $this->requestStack = $requestStack;
     }
 
     public function normalize($object, $format = null, array $context = []): array
@@ -22,7 +26,7 @@ class UserNormalizer implements NormalizerInterface, CacheableSupportsMethodInte
         return [
             'id' => $object->getId(),
             'name' => $object->getFirstName(),
-            'avatar' => '/assets/img/avatar/' . $object->getAvatar(),
+            'avatar' => $object->getAvatar() ? $this->requestStack->getCurrentRequest()->getUriForPath($object->getAvatar()): null,
             'phone' => $object->getPhone(),
             'finished_onboarding' => $object->getFinishedOnboarding(),
             'events' => array_map(function (Event $event) {

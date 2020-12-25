@@ -20,19 +20,15 @@ class EventController extends APIController
 {
     /**
      * @Route("/api/communities/{communityId}/events", name="community", methods={"GET"})
-     * @param EventRepository $eventRepository
-     * @param EventNormalizer $eventNormalizer
-     * @param $communityId
+     * @param CommunityRepository $communityRepository
+     * @param int $communityId
      * @return Response
-     * @throws \Symfony\Component\Serializer\Exception\ExceptionInterface
      * @throws \Exception
      */
-    public function index(EventRepository $eventRepository, EventNormalizer $eventNormalizer, int $communityId)
+    public function index(CommunityRepository $communityRepository, int $communityId)
     {
         $this->validateGetParams($communityId, Community::class);
-        $event = $eventRepository->find($communityId);
-        $data = $eventNormalizer->normalize($event);
-        $data['members'] = $event->getMembers();
+        $data = $communityRepository->find($communityId)->getEvents();
 
         return $this->json($data, 200);
     }
@@ -52,10 +48,9 @@ class EventController extends APIController
         Request $request,
         CommunityRepository $communityRepository,
         EntityManagerInterface $em,
-        EventNormalizer $eventNormalizer,
         int $communityId
     )
-    {
+    {;
         $data = json_decode($request->getContent(), true);
         $this->validateGetParams($communityId, Community::class);
         $community = $communityRepository->find($communityId);
@@ -68,12 +63,11 @@ class EventController extends APIController
         $community->addEvent($event);
         $em->flush();
 
-        return $this->json($eventNormalizer->normalize($event), 200);
+        return $this->json($event, 200);
     }
 
     /**
      * @Route("/api/communities/{communityId}/events/{eventId}/", methods={"GET"})
-     * @param Request $request
      * @param EventRepository $eventRepository
      * @param EventNormalizer $eventNormalizer
      * @param int $communityId
@@ -83,7 +77,6 @@ class EventController extends APIController
      * @throws \Exception
      */
     public function show(
-        Request $request,
         EventRepository $eventRepository,
         EventNormalizer $eventNormalizer,
         int $communityId,
@@ -93,16 +86,8 @@ class EventController extends APIController
         $this->validateGetParams($communityId, Community::class);
         $this->validateGetParams($eventId, Event::class);
         $event = $eventRepository->find($eventId);
-        $lastMembers = array_slice($event->getMembers(), 0, 5);
-        array_walk($lastMembers, function (&$member) use ($request) {
-            if($member['avatar']) {
-                $avatar = $request->getUriForPath($member['avatar']);
-                unset($member['avatar']);
-                $member['avatar'] = $avatar;
-            }
-        });
         $data = $eventNormalizer->normalize($event);
-        $data['last_members'] = $lastMembers;
+        $data['last_members'] = array_slice($data['members'], 0, 5);
 
         return $this->json($data, 200);
     }
@@ -123,7 +108,6 @@ class EventController extends APIController
         Request $request,
         EntityManagerInterface $em,
         EventRepository $eventRepository,
-        EventNormalizer $eventNormalizer,
         int $communityId,
         int $eventId
     )
@@ -140,7 +124,7 @@ class EventController extends APIController
         $em->persist($event);
         $em->flush();
 
-        return $this->json($eventNormalizer->normalize($event), 200);
+        return $this->json($event, 200);
     }
 
     /**
@@ -194,7 +178,7 @@ class EventController extends APIController
      * @Route("/api/communities/{communityId}/events/{eventId}/join", methods={"POST"})
      * @param EventRepository $eventRepository
      * @param EntityManagerInterface $em
-     * @param int $communityId
+     * @param Community $communityId
      * @param int $eventId
      * @return JsonResponse
      * @throws \Exception

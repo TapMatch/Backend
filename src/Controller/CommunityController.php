@@ -5,7 +5,6 @@ namespace App\Controller;
 use App\Entity\Community;
 use App\Repository\CommunityRepository;
 use App\Repository\EventRepository;
-use App\Serializer\Normalizer\CommunityNormalizer;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -16,41 +15,38 @@ class CommunityController extends APIController
     /**
      * @Route("/api/communities", methods={"GET"})
      * @param CommunityRepository $communityRepository
-     * @param CommunityNormalizer $communityNormalizer
      * @return JsonResponse
      */
-    public function index(CommunityRepository $communityRepository, CommunityNormalizer $communityNormalizer)
+    public function index(CommunityRepository $communityRepository)
     {
         $communities = $communityRepository->findBy([], ['id' => 'DESC']);
 
-        return $this->json(array_map(array($communityNormalizer, "normalize"), $communities));
+        return $this->json($communities);
     }
 
     /**
      * @Route("/api/communities/{communityId}", methods={"GET"})
      * @param CommunityRepository $communityRepository
-     * @param CommunityNormalizer $communityNormalizer
      * @param Community $communityId
      * @return JsonResponse
      * @throws \Exception
      */
-    public function show(CommunityRepository $communityRepository, CommunityNormalizer $communityNormalizer, Community $communityId)
+    public function show(CommunityRepository $communityRepository, Community $communityId)
     {
         $this->memberExists($communityId, $this->getUser());
         $community = $communityRepository->find($communityId);
 
-        return $this->json($communityNormalizer->normalize($community));
+        return $this->json($community);
     }
 
     /**
      * @Route("/api/communities", methods={"POST"})
      * @param Request $request
-     * @param CommunityNormalizer $communityNormalizer
      * @param EntityManagerInterface $em
      * @return JsonResponse
      * @throws \Exception
      */
-    public function store(Request $request, CommunityNormalizer $communityNormalizer, EntityManagerInterface $em)
+    public function store(Request $request, EntityManagerInterface $em)
     {
         $data = json_decode($request->getContent(), true);
         $community = new Community();
@@ -60,7 +56,7 @@ class CommunityController extends APIController
         $em->flush();
 
         return $this->json([
-            'data' => $communityNormalizer->normalize($community),
+            'data' => $community,
             'status' => 200
         ]);
     }
@@ -70,7 +66,6 @@ class CommunityController extends APIController
      * @param Request $request
      * @param EntityManagerInterface $em
      * @param CommunityRepository $communityRepository
-     * @param CommunityNormalizer $communityNormalizer
      * @param int $communityId
      * @return JsonResponse
      * @throws \Exception
@@ -79,7 +74,6 @@ class CommunityController extends APIController
         Request $request,
         EntityManagerInterface $em,
         CommunityRepository $communityRepository,
-        CommunityNormalizer $communityNormalizer,
         int $communityId
     )
     {
@@ -94,7 +88,7 @@ class CommunityController extends APIController
         $em->persist($community);
         $em->flush();
 
-        return $this->json($communityNormalizer->normalize($community));
+        return $this->json($community);
     }
 
     /**

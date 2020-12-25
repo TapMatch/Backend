@@ -108,19 +108,7 @@ class Community
 
     public function getEvents()
     {
-        return array_map(function (Event $event)
-        {
-            return [
-                'id' => $event->getId(),
-                'name' => $event->getName(),
-                'date' => $event->getDate(),
-                'address' => $event->getAddress(),
-                'coordinates' => $event->getCoordinates(),
-                'description' => $event->getDescription(),
-                'join_limit' => $event->getJoinLimit()
-            ];
-        },
-            $this->events->toArray());
+        return $this->events;
     }
 
     public function addEvent(Event $event): self

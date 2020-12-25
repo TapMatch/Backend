@@ -40,10 +40,11 @@ class Event
     private $address;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="object")
      * @Assert\NotBlank
+     * @Assert\Type(type="array")
      */
-    private $coordinates;
+    private $coordinates = [];
 
     /**
      * @ORM\Column(type="string", length=255)
@@ -119,12 +120,12 @@ class Event
         return $this;
     }
 
-    public function getCoordinates(): ?string
+    public function getCoordinates()
     {
         return $this->coordinates;
     }
 
-    public function setCoordinates(string $coordinates): self
+    public function setCoordinates($coordinates): self
     {
         $this->coordinates = $coordinates;
 
@@ -157,15 +158,7 @@ class Event
 
     public function getMembers()
     {
-        return array_map(function (User $user) {
-            return [
-                'id' => $user->getId(),
-                'name' => $user->getFirstName(),
-                'phone' => $user->getPhone(),
-                'avatar' => $user->getAvatar() ? '/assets/img/avatar/' . $user->getAvatar() : ''
-            ];
-        },
-            $this->members->toArray());
+        return $this->members;
     }
 
     public function addMember(User $member): self
