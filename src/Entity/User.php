@@ -94,10 +94,16 @@ class User implements UserInterface
      */
     private $finishedOnboarding = false;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Event::class, mappedBy="organizer", orphanRemoval=true)
+     */
+    private $myEvents;
+
     public function __construct()
     {
         $this->communities = new ArrayCollection();
         $this->events = new ArrayCollection();
+        $this->myEvents = new ArrayCollection();
     }
 
     public function getId(): ?int

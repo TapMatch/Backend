@@ -11,17 +11,22 @@ use Doctrine\ORM\EntityManagerInterface;
 
 class ProfileController extends AbstractController
 {
+    private UserRepository $userRepository;
+
+    public function __construct(UserRepository $userRepository)
+    {
+        $this->userRepository = $userRepository;
+    }
+
     /**
      * @Route("/api/profile/avatar", methods={"POST"})
      * @param Request $request
      * @param EntityManagerInterface $entityManager
-     * @param UserRepository $userRepository
      * @return JsonResponse
      */
     public function setAvatar(
         Request $request,
-        EntityManagerInterface $entityManager,
-        UserRepository $userRepository
+        EntityManagerInterface $entityManager
     ): JsonResponse
     {
         $file = $request->files->get('photo');
@@ -34,9 +39,10 @@ class ProfileController extends AbstractController
             'PNG'
         ];
 
-        $user = $userRepository->findOneBy(['apiToken' => $this->getUser()->getApiToken()]);
+        $user = $this->userRepository
+            ->findOneBy(['apiToken' => $this->getUser()->getApiToken()]);
 
-        if(!empty($file)) {
+        if (!empty($file)) {
             $fileFormat = $file->getClientOriginalExtension();
 
             if (in_array($fileFormat, $validFormat)) {
@@ -67,17 +73,15 @@ class ProfileController extends AbstractController
      * @Route("/api/profile", methods={"PUT"})
      * @param Request $request
      * @param EntityManagerInterface $entityManager
-     * @param UserRepository $userRepository
      * @return JsonResponse
      */
     public function updateProfile(
         Request $request,
-        EntityManagerInterface $entityManager,
-        UserRepository $userRepository
+        EntityManagerInterface $entityManager
     ): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
-        $user = $userRepository->find($this->getUser());
+        $user = $this->userRepository->find($this->getUser());
         $data['finished_onboarding'] ? $user->setFinishedOnboarding($data['finished_onboarding']) : false;
         $data['first_name'] ? $user->setFirstName($data['first_name']) : false;
 
@@ -95,17 +99,16 @@ class ProfileController extends AbstractController
      * @Route("/api/profile/name", methods={"PUT"})
      * @param Request $request
      * @param EntityManagerInterface $entityManager
-     * @param UserRepository $userRepository
      * @return JsonResponse
      */
     public function setName(
         Request $request,
-        EntityManagerInterface $entityManager,
-        UserRepository $userRepository
+        EntityManagerInterface $entityManager
     ): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
-        $user = $userRepository->find($this->getUser());
+        $user = $this->userRepository
+            ->find($this->getUser());
         $user->setFirstName($data['first_name']);
         $entityManager->persist($user);
         $entityManager->flush();
@@ -119,13 +122,34 @@ class ProfileController extends AbstractController
 
     /**
      * @Route("/api/profile", methods={"GET"})
-     * @param UserRepository $userRepository
      * @return JsonResponse
      */
-    public function getProfile(UserRepository $userRepository): JsonResponse
+    public function getProfile(): JsonResponse
     {
-        $user = $userRepository->find($this->getUser());
+        $user = $this->userRepository
+            ->find($this->getUser());
 
         return $this->json($user);
+    }
+
+    /**
+     * @Route("/api/profile", methods="DELETE")
+     */
+    public function destroy(): JsonResponse
+    {
+        try {
+            $em = $this->getDoctrine()->getManager();
+            $em->remove($this->getUser());
+            $em->flush();
+        } catch (\Exception $e)
+        {
+            return $this->json([
+                'error' => $e->getMessage()
+            ], 400);
+        }
+
+        return $this->json([
+            'message' => 'successfully deleted'
+        ], 200);
     }
 }
