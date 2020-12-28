@@ -4,10 +4,9 @@ namespace App\Controller;
 
 use App\Entity\Community;
 use App\Entity\Event;
-use App\Repository\CommunityRepository;
-use App\Repository\EventRepository;
 use App\Serializer\Normalizer\EventNormalizer;
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -30,7 +29,7 @@ class EventController extends APIController
      * @Route("/api/communities/{community}/events", name="community", methods={"GET"})
      * @param Community $community
      * @return JsonResponse
-     * @throws \Exception
+     * @throws Exception
      */
     public function index(
         Community $community
@@ -48,7 +47,7 @@ class EventController extends APIController
      * @param EntityManagerInterface $em
      * @param Community $community
      * @return JsonResponse
-     * @throws \Exception
+     * @throws Exception
      */
     public function store(
         Request $request,
@@ -78,7 +77,7 @@ class EventController extends APIController
      * @param Event $event
      * @return JsonResponse
      * @throws ExceptionInterface
-     * @throws \Exception
+     * @throws Exception
      */
     public function show(
         EventNormalizer $eventNormalizer,
@@ -101,7 +100,7 @@ class EventController extends APIController
      * @param Community $community
      * @param Event $event
      * @return JsonResponse
-     * @throws \Exception
+     * @throws Exception
      */
     public function update(
         Request $request,
@@ -128,7 +127,7 @@ class EventController extends APIController
      * @param Community $community
      * @param Event $event
      * @return JsonResponse
-     * @throws \Exception
+     * @throws Exception
      */
     public function destroy(
         EntityManagerInterface $em,
@@ -152,7 +151,7 @@ class EventController extends APIController
      * @param Community $community
      * @param Event $event
      * @return JsonResponse
-     * @throws \Exception
+     * @throws Exception
      */
     public function leave(
         EntityManagerInterface $em,
@@ -177,7 +176,7 @@ class EventController extends APIController
      * @param Community $community
      * @param Event $event
      * @return JsonResponse
-     * @throws \Exception
+     * @throws Exception
      */
     public function join(
         EntityManagerInterface $em,
@@ -186,7 +185,7 @@ class EventController extends APIController
     ): JsonResponse
     {
         $this->memberExists($event, $community->getEvents(), '', true);
-        $this->memberExists($this->getUser(), $event->getMembers(), 'event',);
+        $this->memberExists($this->getUser(), $event->getMembers(), 'event');
         $event->addMember($this->getUser());
         $em->flush();
 

@@ -28,14 +28,14 @@ class RegistrationController extends AbstractController
      * @return object|UserInterface|null
      * @throws Exception
      */
-    public function getUser(): JsonResponse
+    public function getUser(): ?UserInterface
     {
         $user = $this->get('session')->get('user');
         if (!$user) {
             throw new Exception('incorrect PHPSESSID');
         }
 
-        return $this->json($user, 200);
+        return $user;
     }
 
     /**

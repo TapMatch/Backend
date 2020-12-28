@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use phpDocumentor\Reflection\Types\Integer;
@@ -84,6 +85,7 @@ class User implements UserInterface
 
     /**
      * @ORM\ManyToMany(targetEntity=Event::class, mappedBy="members")
+     * @ORM\OrderBy({"date" = "ASC"})
      */
     private $events;
 
@@ -292,7 +294,11 @@ class User implements UserInterface
      */
     public function getEvents(): Collection
     {
-        return $this->events;
+        $criteria = Criteria::create()
+            ->where(Criteria::expr()->gt('date', date('Y-m-d H:i')))
+            ->orderBy(['date' => 'ASC']);
+
+        return $this->events->matching($criteria);
     }
 
     public function addEvent(Event $event): self

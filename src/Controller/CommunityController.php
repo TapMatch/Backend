@@ -4,10 +4,8 @@ namespace App\Controller;
 
 use App\Entity\Community;
 use App\Repository\CommunityRepository;
-use App\Repository\EventRepository;
-use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use http\Client\Curl\User;
+use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -47,7 +45,7 @@ class CommunityController extends APIController
      * @Route("/api/communities/{communityId}", methods={"GET"})
      * @param Community $communityId
      * @return JsonResponse
-     * @throws \Exception
+     * @throws Exception
      */
     public function show(Community $communityId): JsonResponse
     {
@@ -59,7 +57,7 @@ class CommunityController extends APIController
      * @param Request $request
      * @param EntityManagerInterface $em
      * @return JsonResponse
-     * @throws \Exception
+     * @throws Exception
      */
     public function store(
         Request $request,
@@ -86,7 +84,7 @@ class CommunityController extends APIController
      * @param EntityManagerInterface $em
      * @param Community $communityId
      * @return JsonResponse
-     * @throws \Exception
+     * @throws Exception
      */
     public function update(
         Request $request,
@@ -111,7 +109,7 @@ class CommunityController extends APIController
      * @param EntityManagerInterface $em
      * @param Community $community
      * @return JsonResponse
-     * @throws \Exception
+     * @throws Exception
      */
     public function destroy(
         EntityManagerInterface $em,
@@ -133,7 +131,7 @@ class CommunityController extends APIController
      * @param EntityManagerInterface $em
      * @param Community $communityId
      * @return JsonResponse
-     * @throws \Exception
+     * @throws Exception
      */
     public function leave(
         EntityManagerInterface $em,
@@ -157,7 +155,7 @@ class CommunityController extends APIController
      * @param EntityManagerInterface $em
      * @param Community $communityId
      * @return JsonResponse
-     * @throws \Exception
+     * @throws Exception
      */
     public function join(
         Request $request,
@@ -185,18 +183,15 @@ class CommunityController extends APIController
 
     /**
      * @Route("/api/communities/{communityId}/upcoming-events", methods={"GET"})
-     * @param EventRepository $eventRepository
-     * @param Community $communityId
      * @return JsonResponse
-     * @throws \Exception
+     * @throws Exception
      */
-    public function upcomingEvents(
-        EventRepository $eventRepository,
-        Community $communityId
-    ): JsonResponse
+    public function upcomingEvents(): JsonResponse
     {
-        $this->memberExists($this->getUser(), $communityId->getUsers(), '', true);
-
-        return $this->json($eventRepository->findByField($communityId, 'community', 5, 'date', 'ASC'), 200);
+        $events = $this->getUser()->getEvents()->slice(0,5);
+        return $this->json([
+            'count' => count($events),
+            'data' => $events
+        ]);
     }
 }
