@@ -164,7 +164,7 @@ class CommunityController extends APIController
     ): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
-        $this->memberExists($this->getUser(), $communityId->getUsers(), 'community');
+//        $this->memberExists($this->getUser(), $communityId->getUsers(), 'community');
         if (isset($data['access']) && $communityId->getAccess() !== $data['access']) {
             return $this->json([
                 'error' => 'incorrect access code',
