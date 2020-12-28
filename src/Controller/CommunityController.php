@@ -5,38 +5,53 @@ namespace App\Controller;
 use App\Entity\Community;
 use App\Repository\CommunityRepository;
 use App\Repository\EventRepository;
+use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use http\Client\Curl\User;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class CommunityController extends APIController
 {
+    private CommunityRepository $communityRepository;
+
+
+    /**
+     * CommunityController constructor.
+     * @param CommunityRepository $communityRepository
+     * @param ValidatorInterface $validator
+     */
+    public function __construct(
+        CommunityRepository $communityRepository,
+        ValidatorInterface $validator
+    )
+    {
+        parent::__construct($validator);
+        $this->communityRepository = $communityRepository;
+    }
+
     /**
      * @Route("/api/communities", methods={"GET"})
-     * @param CommunityRepository $communityRepository
      * @return JsonResponse
      */
-    public function index(CommunityRepository $communityRepository)
+    public function index(): JsonResponse
     {
-        $communities = $communityRepository->findBy([], ['id' => 'DESC']);
+        $communities = $this->communityRepository->findBy([], ['id' => 'DESC']);
 
         return $this->json($communities);
     }
 
     /**
      * @Route("/api/communities/{communityId}", methods={"GET"})
-     * @param CommunityRepository $communityRepository
      * @param Community $communityId
      * @return JsonResponse
      * @throws \Exception
      */
-    public function show(CommunityRepository $communityRepository, Community $communityId)
+    public function show(Community $communityId): JsonResponse
     {
-        $this->memberExists($communityId, $this->getUser());
-        $community = $communityRepository->find($communityId);
-
-        return $this->json($community);
+        return $this->json($communityId);
     }
 
     /**
@@ -46,11 +61,15 @@ class CommunityController extends APIController
      * @return JsonResponse
      * @throws \Exception
      */
-    public function store(Request $request, EntityManagerInterface $em)
+    public function store(
+        Request $request,
+        EntityManagerInterface $em
+    ): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
         $community = new Community();
         $community->setData($data);
+        $community->addUser($this->getUser());
         $this->isValid($community);
         $em->persist($community);
         $em->flush();
@@ -65,45 +84,41 @@ class CommunityController extends APIController
      * @Route("/api/communities/{communityId}", methods={"PUT"})
      * @param Request $request
      * @param EntityManagerInterface $em
-     * @param CommunityRepository $communityRepository
-     * @param int $communityId
+     * @param Community $communityId
      * @return JsonResponse
      * @throws \Exception
      */
     public function update(
         Request $request,
         EntityManagerInterface $em,
-        CommunityRepository $communityRepository,
-        int $communityId
-    )
+        Community $communityId
+    ): JsonResponse
     {
-        $this->validateGetParams($communityId, Community::class);
         $data = json_decode($request->getContent(), true);
-        $this->memberExists($communityId, $this->getUser());
+        $this->memberExists($this->getUser(), $communityId->getUsers(), '', true);
 
-        $community = $communityRepository->find($communityId);
-        $community->setData($data);
-        $this->isValid($community);
+        $communityId->setData($data);
+        $this->isValid($communityId);
 
-        $em->persist($community);
+        $em->persist($communityId);
         $em->flush();
 
-        return $this->json($community);
+        return $this->json($communityId);
     }
 
     /**
-     * @Route("/api/communities/{communityId}", methods={"DELETE"})
-     * @param CommunityRepository $communityRepository
+     * @Route("/api/communities/{community}", methods={"DELETE"})
      * @param EntityManagerInterface $em
-     * @param int $communityId
+     * @param Community $community
      * @return JsonResponse
      * @throws \Exception
      */
-    public function destroy(CommunityRepository $communityRepository, EntityManagerInterface $em, int $communityId)
+    public function destroy(
+        EntityManagerInterface $em,
+        Community $community
+    ): JsonResponse
     {
-        $this->validateGetParams($communityId, Community::class);
-        $this->memberExists($communityId, $this->getUser());
-        $community = $communityRepository->find($communityId);
+        $this->memberExists($this->getUser(), $community->getUsers(), '', true);
         $em->remove($community);
         $em->flush();
 
@@ -115,19 +130,18 @@ class CommunityController extends APIController
 
     /**
      * @Route("/api/communities/{communityId}/leave", methods={"DELETE"})
-     * @param CommunityRepository $communityRepository
      * @param EntityManagerInterface $em
-     * @param int $communityId
+     * @param Community $communityId
      * @return JsonResponse
      * @throws \Exception
      */
-    public function leave(CommunityRepository $communityRepository, EntityManagerInterface $em, int $communityId)
+    public function leave(
+        EntityManagerInterface $em,
+        Community $communityId
+    ): JsonResponse
     {
-
-        $this->validateGetParams($communityId, Community::class);
-        $this->memberExists($communityId, $this->getUser());
-        $community = $communityRepository->find($communityId);
-        $community->removeUser($this->getUser());
+        $this->memberExists($this->getUser(), $communityId->getUsers(), '', true);
+        $communityId->removeUser($this->getUser());
         $em->flush();
 
         return $this->json([
@@ -140,30 +154,26 @@ class CommunityController extends APIController
     /**
      * @Route("/api/communities/{communityId}/join", methods="POST", requirements={"id":"\d+"})
      * @param Request $request
-     * @param CommunityRepository $communityRepository
      * @param EntityManagerInterface $em
-     * @param int $communityId
+     * @param Community $communityId
      * @return JsonResponse
      * @throws \Exception
      */
     public function join(
         Request $request,
-        CommunityRepository $communityRepository,
         EntityManagerInterface $em,
-        int $communityId
-    )
+        Community $communityId
+    ): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
-        $this->validateGetParams($communityId, Community::class);
-        $this->memberExists($communityId, $this->getUser());
-        $community = $communityRepository->find($communityId);
-        if ($community->getAccess() !== ($data['access'] ?? null)) {
+        $this->memberExists($this->getUser(), $communityId->getUsers(), 'community');
+        if (isset($data['access']) && $communityId->getAccess() !== $data['access']) {
             return $this->json([
                 'error' => 'incorrect access code',
                 'status' => 422
             ]);
         }
-        $community->addUser($this->getUser());
+        $communityId->addUser($this->getUser());
         $em->flush();
 
         return $this->json([
@@ -176,14 +186,16 @@ class CommunityController extends APIController
     /**
      * @Route("/api/communities/{communityId}/upcoming-events", methods={"GET"})
      * @param EventRepository $eventRepository
-     * @param int $communityId
+     * @param Community $communityId
      * @return JsonResponse
      * @throws \Exception
      */
-    public function upcomingEvents(EventRepository $eventRepository, int $communityId)
+    public function upcomingEvents(
+        EventRepository $eventRepository,
+        Community $communityId
+    ): JsonResponse
     {
-        $this->validateGetParams($communityId, Community::class);
-        $this->memberExists($communityId, $this->getUser());
+        $this->memberExists($this->getUser(), $communityId->getUsers(), '', true);
 
         return $this->json($eventRepository->findByField($communityId, 'community', 5, 'date', 'ASC'), 200);
     }

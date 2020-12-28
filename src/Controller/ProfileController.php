@@ -3,12 +3,14 @@
 namespace App\Controller;
 
 use App\Repository\UserRepository;
+use App\Serializer\Normalizer\UserNormalizer;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Serializer\Exception\ExceptionInterface;
 
 class ProfileController extends AbstractController
 {
@@ -17,9 +19,13 @@ class ProfileController extends AbstractController
      * @param Request $request
      * @param EntityManagerInterface $entityManager
      * @param UserRepository $userRepository
-     * @return Response
+     * @return JsonResponse
      */
-    public function setAvatar(Request $request, EntityManagerInterface $entityManager, UserRepository $userRepository): Response
+    public function setAvatar(
+        Request $request,
+        EntityManagerInterface $entityManager,
+        UserRepository $userRepository
+    ): JsonResponse
     {
         $file = $request->files->get('photo');
         $validFormat = [
@@ -67,7 +73,11 @@ class ProfileController extends AbstractController
      * @param UserRepository $userRepository
      * @return JsonResponse
      */
-    public function updateProfile(Request $request, EntityManagerInterface $entityManager, UserRepository $userRepository)
+    public function updateProfile(
+        Request $request,
+        EntityManagerInterface $entityManager,
+        UserRepository $userRepository
+    ): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
         $user = $userRepository->find($this->getUser());
@@ -91,7 +101,11 @@ class ProfileController extends AbstractController
      * @param UserRepository $userRepository
      * @return JsonResponse
      */
-    public function setName(Request $request, EntityManagerInterface $entityManager, UserRepository $userRepository)
+    public function setName(
+        Request $request,
+        EntityManagerInterface $entityManager,
+        UserRepository $userRepository
+    ): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
         $user = $userRepository->find($this->getUser());
@@ -111,7 +125,7 @@ class ProfileController extends AbstractController
      * @param UserRepository $userRepository
      * @return JsonResponse
      */
-    public function getProfile(UserRepository $userRepository)
+    public function getProfile(UserRepository $userRepository): JsonResponse
     {
         $user = $userRepository->find($this->getUser());
 

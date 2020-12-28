@@ -10,50 +10,54 @@ use App\Serializer\Normalizer\EventNormalizer;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Serializer\Exception\ExceptionInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
  * @Route(requirements={"communityId"="\d+", "eventId"="\d+"})
  */
 class EventController extends APIController
 {
+    public function __construct(
+        ValidatorInterface $validator
+    )
+    {
+        parent::__construct($validator);
+    }
+
     /**
-     * @Route("/api/communities/{communityId}/events", name="community", methods={"GET"})
-     * @param CommunityRepository $communityRepository
-     * @param int $communityId
-     * @return Response
+     * @Route("/api/communities/{community}/events", name="community", methods={"GET"})
+     * @param Community $community
+     * @return JsonResponse
      * @throws \Exception
      */
-    public function index(CommunityRepository $communityRepository, int $communityId)
+    public function index(
+        Community $community
+    ): JsonResponse
     {
-        $this->validateGetParams($communityId, Community::class);
-        $data = $communityRepository->find($communityId)->getEvents();
+        $this->memberExists($this->getUser(), $community->getUsers(),'', true);
+        $data = $community->getEvents();
 
         return $this->json($data, 200);
     }
 
     /**
-     * @Route("/api/communities/{communityId}/events", methods={"POST"})
+     * @Route("/api/communities/{community}/events", methods={"POST"})
      * @param Request $request
-     * @param CommunityRepository $communityRepository
      * @param EntityManagerInterface $em
-     * @param EventNormalizer $eventNormalizer
-     * @param int $communityId
+     * @param Community $community
      * @return JsonResponse
-     * @throws \Symfony\Component\Serializer\Exception\ExceptionInterface
      * @throws \Exception
      */
     public function store(
         Request $request,
-        CommunityRepository $communityRepository,
         EntityManagerInterface $em,
-        int $communityId
-    )
-    {;
+        Community $community
+    ): JsonResponse
+    {
         $data = json_decode($request->getContent(), true);
-        $this->validateGetParams($communityId, Community::class);
-        $community = $communityRepository->find($communityId);
+        $this->memberExists($this->getUser(), $community->getUsers(), '', true);
         $event = new Event();
         $data['user'] = $this->getUser();
         $event->setData($data);
@@ -61,31 +65,29 @@ class EventController extends APIController
 
         $em->persist($event);
         $community->addEvent($event);
+        $event->addMember($this->getUser());
         $em->flush();
 
         return $this->json($event, 200);
     }
 
     /**
-     * @Route("/api/communities/{communityId}/events/{eventId}/", methods={"GET"})
-     * @param EventRepository $eventRepository
+     * @Route("/api/communities/{community}/events/{event}/", methods={"GET"})
      * @param EventNormalizer $eventNormalizer
-     * @param int $communityId
-     * @param int $eventId
+     * @param Community $community
+     * @param Event $event
      * @return JsonResponse
-     * @throws \Symfony\Component\Serializer\Exception\ExceptionInterface
+     * @throws ExceptionInterface
      * @throws \Exception
      */
     public function show(
-        EventRepository $eventRepository,
         EventNormalizer $eventNormalizer,
-        int $communityId,
-        int $eventId
-    )
+        Community $community,
+        Event $event
+    ): JsonResponse
     {
-        $this->validateGetParams($communityId, Community::class);
-        $this->validateGetParams($eventId, Event::class);
-        $event = $eventRepository->find($eventId);
+        $this->memberExists($event, $community->getEvents(), '', true);
+        $this->memberExists($this->getUser(), $community->getUsers(), '', true);
         $data = $eventNormalizer->normalize($event);
         $data['last_members'] = array_slice($data['members'], 0, 5);
 
@@ -93,31 +95,24 @@ class EventController extends APIController
     }
 
     /**
-     * @Route("/api/communities/{communityId}/events/{eventId}", methods={"PUT"})
+     * @Route("/api/communities/{community}/events/{event}", methods={"PUT"})
      * @param Request $request
      * @param EntityManagerInterface $em
-     * @param EventRepository $eventRepository
-     * @param EventNormalizer $eventNormalizer
-     * @param int $communityId
-     * @param int $eventId
+     * @param Community $community
+     * @param Event $event
      * @return JsonResponse
-     * @throws \Symfony\Component\Serializer\Exception\ExceptionInterface
      * @throws \Exception
      */
     public function update(
         Request $request,
         EntityManagerInterface $em,
-        EventRepository $eventRepository,
-        int $communityId,
-        int $eventId
-    )
+        Community $community,
+        Event $event
+    ): JsonResponse
     {
+        $this->memberExists($event, $community->getEvents(), '', true);
         $data = json_decode($request->getContent(), true);
-
-        $this->validateGetParams($communityId, Community::class);
-        $this->validateGetParams($eventId, Event::class);
-
-        $event = $eventRepository->find($eventId);
+        $this->memberExists($this->getUser(), $event->getMembers(), '', true);
         $event->setData($data);
         $this->isValid($event);
 
@@ -128,20 +123,21 @@ class EventController extends APIController
     }
 
     /**
-     * @Route("/api/communities/{communityId}/events/{eventId}", methods={"DELETE"})
-     * @param EventRepository $eventRepository
+     * @Route("/api/communities/{community}/events/{event}", methods={"DELETE"})
      * @param EntityManagerInterface $em
-     * @param int $communityId
-     * @param int $eventId
+     * @param Community $community
+     * @param Event $event
      * @return JsonResponse
      * @throws \Exception
      */
-    public function destroy(EventRepository $eventRepository, EntityManagerInterface $em, int $communityId, int $eventId)
+    public function destroy(
+        EntityManagerInterface $em,
+        Community $community,
+        Event $event
+    ): JsonResponse
     {
-        $this->validateGetParams($communityId, Community::class);
-        $this->validateGetParams($eventId, Event::class);
-
-        $event = $eventRepository->find($eventId);
+        $this->memberExists($event, $community->getEvents(), '', true);
+        $this->memberExists($this->getUser(), $event->getMembers(),'', true);
         $em->remove($event);
         $em->flush();
 
@@ -151,20 +147,21 @@ class EventController extends APIController
     }
 
     /**
-     * @Route("/api/communities/{communityId}/events/{eventId}/leave", methods={"DELETE"})
-     * @param EventRepository $eventRepository
+     * @Route("/api/communities/{community}/events/{event}/leave", methods={"DELETE"})
      * @param EntityManagerInterface $em
-     * @param int $communityId
-     * @param int $eventId
+     * @param Community $community
+     * @param Event $event
      * @return JsonResponse
      * @throws \Exception
      */
-    public function leave(EventRepository $eventRepository, EntityManagerInterface $em, int $communityId, int $eventId)
+    public function leave(
+        EntityManagerInterface $em,
+        Community $community,
+        Event $event
+    ): JsonResponse
     {
-        $this->validateGetParams($communityId, Community::class);
-        $this->validateGetParams($eventId, Event::class);
-
-        $event = $eventRepository->find($eventId);
+        $this->memberExists($event, $community->getEvents(), '', true);
+        $this->memberExists($this->getUser(), $event->getMembers(), '', true);
         $event->removeMember($this->getUser());
         $em->flush();
 
@@ -175,20 +172,21 @@ class EventController extends APIController
     }
 
     /**
-     * @Route("/api/communities/{communityId}/events/{eventId}/join", methods={"POST"})
-     * @param EventRepository $eventRepository
+     * @Route("/api/communities/{community}/events/{event}/join", methods={"POST"})
      * @param EntityManagerInterface $em
-     * @param Community $communityId
-     * @param int $eventId
+     * @param Community $community
+     * @param Event $event
      * @return JsonResponse
      * @throws \Exception
      */
-    public function join(EventRepository $eventRepository, EntityManagerInterface $em, Community $communityId, int $eventId)
+    public function join(
+        EntityManagerInterface $em,
+        Community $community,
+        Event $event
+    ): JsonResponse
     {
-        $this->validateGetParams($communityId, Community::class);
-        $this->validateGetParams($eventId, Event::class);
-
-        $event = $eventRepository->find($eventId);
+        $this->memberExists($event, $community->getEvents(), '', true);
+        $this->memberExists($this->getUser(), $event->getMembers(), 'event',);
         $event->addMember($this->getUser());
         $em->flush();
 

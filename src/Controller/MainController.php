@@ -12,7 +12,7 @@ class MainController extends AbstractController
     /**
      * @Route("/")
      */
-    public function index(): Response
+    public function index(): JsonResponse
     {
         return $this->json('');
     }
@@ -20,7 +20,7 @@ class MainController extends AbstractController
     /**
      * @Route("/api/tokentest", methods={"POST"})
      */
-    public function tokentest()
+    public function tokentest(): JsonResponse
     {
         return $this->json($this->getUser());
     }

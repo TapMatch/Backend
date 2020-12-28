@@ -209,6 +209,6 @@ class Event
         $this->setDescription($data['description'] ?? false);
         $this->setJoinLimit($data['join_limit'] ?? false);
         $this->setOrganizer($data['user'] ?? null);
-        $this->setDate(\DateTime::createFromFormat('Y-m-d H:i',$data['date']) ?? false);
+        $this->setDate(isset($data['date']) ? \DateTime::createFromFormat('Y-m-d H:i',$data['date']) : null);
     }
 }

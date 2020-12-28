@@ -12,6 +12,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class RegistrationController extends AbstractController
@@ -24,17 +25,17 @@ class RegistrationController extends AbstractController
     }
 
     /**
-     * @return object|\Symfony\Component\Security\Core\User\UserInterface|null
+     * @return object|UserInterface|null
      * @throws Exception
      */
-    public function getUser()
+    public function getUser(): JsonResponse
     {
         $user = $this->get('session')->get('user');
         if (!$user) {
             throw new Exception('incorrect PHPSESSID');
         }
 
-        return $user;
+        return $this->json($user, 200);
     }
 
     /**
@@ -50,7 +51,7 @@ class RegistrationController extends AbstractController
         ValidatorInterface $validator,
         UserRepository $userRepository,
         EntityManagerInterface $em
-    )
+    ): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
         $check = $userRepository->findOneBy(['phone' => $data['phone']]);
@@ -94,7 +95,7 @@ class RegistrationController extends AbstractController
      * @param $user
      * @return JsonResponse
      */
-    public function sendSMS($user)
+    public function sendSMS($user): JsonResponse
     {
         $sms = $this->authyApi->requestSms($user->getAuthyId(), ['force' => true]);
 
@@ -118,7 +119,7 @@ class RegistrationController extends AbstractController
      * @return JsonResponse
      * @throws Exception
      */
-    public function resendCode()
+    public function resendCode(): JsonResponse
     {
         return $this->sendSMS($this->getUser());
     }
@@ -131,7 +132,11 @@ class RegistrationController extends AbstractController
      * @return JsonResponse
      * @throws Exception
      */
-    public function verifyCode(Request $request, UserRepository $userRepository, EntityManagerInterface $em)
+    public function verifyCode(
+        Request $request,
+        UserRepository $userRepository,
+        EntityManagerInterface $em
+    ): JsonResponse
     {
         $code = json_decode($request->getContent(), true);
 

@@ -2,15 +2,9 @@
 
 namespace App\Controller;
 
-use App\Entity\Community;
-use App\Repository\CommunityRepository;
 use App\Validator\Exists;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Exception;
-use http\Client\Response;
-use function MongoDB\BSON\toJSON;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 abstract class APIController extends AbstractController
@@ -27,23 +21,7 @@ abstract class APIController extends AbstractController
     }
 
     /**
-     * @param $id
-     * @param $entity
-     * @return void
-     * @throws Exception
-     */
-    public function validateGetParams($id, $entity)
-    {
-            $constraint = new Exists(['entity' => $entity]);
-            $errors = $this->validator->validate($id, $constraint);
-        if (count($errors)) {
-            throw new Exception($errors[0]->getMessage(), 422);
-        }
-    }
-
-    /**
      * @param $data
-     * @param bool $constraint
      * @return void
      * @throws Exception
      */
@@ -53,7 +31,7 @@ abstract class APIController extends AbstractController
         if (count($violations) > 0) {
             $errors = [];
             foreach ($violations as $violation) {
-                $errors[$violation->getPropertyPath() ?: 'Exists'] = $violation->getMessage();
+                $errors[$violation->getPropertyPath()] = $violation->getMessage();
             }
 
             throw new Exception(json_encode($errors), 422);
@@ -61,15 +39,18 @@ abstract class APIController extends AbstractController
     }
 
     /**
-     * @param $id
-     * @param $member
+     * @param $needle
+     * @param object $haystack
+     * @param string $name
+     * @param bool $check
      * @throws Exception
      */
-    public function memberExists($id, $member)
+    public function memberExists($needle, object $haystack, string $name, bool $check = false)
     {
-        if(!in_array($member, $this->getDoctrine()->getRepository(Community::class)->find($id)->getUsers()->toArray()))
-        {
-           throw new Exception(json_encode('permission denied'), 400);
+        if (!$check && in_array($needle, $haystack->toArray())) {
+            throw new Exception(json_encode("you've already joined this $name"), 400);
+        }elseif ($check && !in_array($needle, $haystack->toArray())) {
+            throw new Exception(json_encode('permission denied'), 400);
         }
     }
 }
