@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Community;
 use App\Entity\Event;
+use App\Repository\EventRepository;
 use App\Serializer\Normalizer\EventNormalizer;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
@@ -146,19 +147,27 @@ class EventController extends APIController
     }
 
     /**
-     * @Route("/api/communities/{community}/events/{event}/leave", methods={"DELETE"})
+     * @Route("/api/communities/{community}/events/{eventId}/leave", methods={"DELETE"})
      * @param EntityManagerInterface $em
      * @param Community $community
-     * @param Event $event
+     * @param int $eventId
+     * @param EventRepository $eventRepository
      * @return JsonResponse
      * @throws Exception
      */
     public function leave(
         EntityManagerInterface $em,
         Community $community,
-        Event $event
+        int $eventId,
+        EventRepository $eventRepository
     ): JsonResponse
     {
+        $event = $eventRepository->find($eventId);
+        if (!$event) {
+            return $this->json([
+                'error' => 'event with this id does not exist'
+            ], 409);
+        }
         $this->memberExists($event, $community->getEvents(), '', true);
         $this->memberExists($this->getUser(), $event->getMembers(), '', true);
         $event->removeMember($this->getUser());
@@ -171,19 +180,27 @@ class EventController extends APIController
     }
 
     /**
-     * @Route("/api/communities/{community}/events/{event}/join", methods={"POST"})
+     * @Route("/api/communities/{community}/events/{eventId}/join", methods={"POST"})
      * @param EntityManagerInterface $em
      * @param Community $community
-     * @param Event $event
+     * @param int $eventId
+     * @param EventRepository $eventRepository
      * @return JsonResponse
      * @throws Exception
      */
     public function join(
         EntityManagerInterface $em,
         Community $community,
-        Event $event
+        int $eventId,
+        EventRepository $eventRepository
     ): JsonResponse
     {
+        $event = $eventRepository->find($eventId);
+        if (!$event) {
+            return $this->json([
+               'error' => 'event with this id does not exist'
+            ], 409);
+        }
         $this->memberExists($event, $community->getEvents(), '', true);
         $this->memberExists($this->getUser(), $event->getMembers(), 'event');
         $event->addMember($this->getUser());
@@ -192,6 +209,5 @@ class EventController extends APIController
         return $this->json([
             'message' => 'you joined this event'
         ], 200);
-
     }
 }
