@@ -30,6 +30,7 @@ class Event
      * @ORM\Column(type="datetime")
      * @Assert\NotBlank
      * @Assert\DateTime
+     * @Assert\GreaterThan("+ 1 minute")
      */
     private $date;
 

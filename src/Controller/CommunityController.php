@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Community;
 use App\Repository\CommunityRepository;
+use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -164,19 +165,21 @@ class CommunityController extends APIController
     ): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
-//        $this->memberExists($this->getUser(), $communityId->getUsers(), 'community');
-        if (isset($data['access']) && $communityId->getAccess() !== $data['access']) {
+        $this->memberExists($this->getUser(), $communityId->getUsers(), 'community');
+        if (isset($data['access']) && $communityId->getAccess() == $data['access']) {
+            $communityId->addUser($this->getUser());
+            $em->flush();
+
             return $this->json([
-                'error' => 'incorrect access code',
-                'status' => 422
+                'success' => 'you joined this community',
+                'status' => 200
             ]);
+
         }
-        $communityId->addUser($this->getUser());
-        $em->flush();
 
         return $this->json([
-            'success' => 'you joined this community',
-            'status' => 200
+            'error' => 'incorrect access code',
+            'status' => 422
         ]);
 
     }
@@ -188,7 +191,7 @@ class CommunityController extends APIController
      */
     public function upcomingEvents(): JsonResponse
     {
-        $events = $this->getUser()->getEvents()->slice(0,5);
+        $events = $this->getUser()->getEvents()->slice(0, 5);
         return $this->json([
             'count' => count($events),
             'data' => $events

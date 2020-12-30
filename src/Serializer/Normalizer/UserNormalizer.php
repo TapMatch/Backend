@@ -50,7 +50,8 @@ class UserNormalizer implements NormalizerInterface, CacheableSupportsMethodInte
                         'name' => $community->getName(),
                         'access' => $community->getAccess(),
                         'city' => $community->getCity(),
-                        'count' => $community->getUsers()->count()
+                        'count' => $community->getUsers()->count(),
+                        'is_open' => $community->getIsOpen()
                     ];
                 },
                     $object->getCommunities()->toArray())
