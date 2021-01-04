@@ -4,7 +4,6 @@ namespace App\Controller;
 
 use App\Entity\Community;
 use App\Repository\CommunityRepository;
-use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -15,7 +14,6 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 class CommunityController extends APIController
 {
     private CommunityRepository $communityRepository;
-
 
     /**
      * CommunityController constructor.
@@ -166,7 +164,7 @@ class CommunityController extends APIController
     {
         $data = json_decode($request->getContent(), true);
         $this->memberExists($this->getUser(), $communityId->getUsers(), 'community');
-        if (isset($data['access']) && $communityId->getAccess() == $data['access']) {
+        if (isset($data['access']) && $communityId->getAccess() == $data['access'] || $communityId->getIsOpen()) {
             $communityId->addUser($this->getUser());
             $em->flush();
 
@@ -179,8 +177,7 @@ class CommunityController extends APIController
 
         return $this->json([
             'error' => 'incorrect access code',
-            'status' => 422
-        ]);
+        ], 422);
 
     }
 
