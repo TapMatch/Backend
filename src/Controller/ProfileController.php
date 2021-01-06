@@ -84,9 +84,9 @@ class ProfileController extends AbstractController
     {
         $data = json_decode($request->getContent(), true);
         $user = $this->userRepository->find($this->getUser());
-        $data['finished_onboarding'] ? $user->setFinishedOnboarding($data['finished_onboarding']) : false;
-        $data['first_name'] ? $user->setFirstName($data['first_name']) : false;
-
+        !isset($data['finished_onboarding']) ?: $user->setFinishedOnboarding($data['finished_onboarding']);
+        !isset($data['first_name']) ?: $user->setFirstName($data['first_name']);
+        !isset($data['uuid']) ?: $user->setUuid($data['uuid']);
         $entityManager->persist($user);
         $entityManager->flush();
 
