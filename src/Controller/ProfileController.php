@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Cron;
 use App\Repository\UserRepository;
 use App\Service\OneSignalService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -162,6 +163,10 @@ class ProfileController extends AbstractController
     public function oneSignal(OneSignalService $oneSignalService)
     {
         $oneSignalService->eventStarted();
+        $cron = new Cron();
+        $cron->setDatetime(date_create());
+        $this->getDoctrine()->getManager()->persist($cron);
+        $this->getDoctrine()->getManager()->flush();
         return $this->json([], 200);
     }
 }
