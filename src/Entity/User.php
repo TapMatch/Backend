@@ -99,6 +99,11 @@ class User implements UserInterface
      */
     private $myEvents;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $uuid;
+
     public function __construct()
     {
         $this->communities = new ArrayCollection();
@@ -342,6 +347,18 @@ class User implements UserInterface
     public function setFinishedOnboarding(bool $finishedOnboarding): self
     {
         $this->finishedOnboarding = $finishedOnboarding;
+
+        return $this;
+    }
+
+    public function getUuid(): ?string
+    {
+        return $this->uuid;
+    }
+
+    public function setUuid(?string $uuid): self
+    {
+        $this->uuid = $uuid;
 
         return $this;
     }

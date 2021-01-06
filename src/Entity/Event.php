@@ -213,16 +213,4 @@ class Event
         $this->setOrganizer($data['user'] ?? null);
         $this->setDate(isset($data['date']) ? \DateTime::createFromFormat('Y-m-d H:i',$data['date']) : null);
     }
-
-    public function getTest(): ?User
-    {
-        return $this->test;
-    }
-
-    public function setTest(?User $test): self
-    {
-        $this->test = $test;
-
-        return $this;
-    }
 }

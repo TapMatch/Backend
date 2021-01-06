@@ -38,7 +38,8 @@
         "symfony/yaml": "4.4.*",
         "twig/extra-bundle": "^2.12|^3.0",
         "twig/twig": "^2.12|^3.0",
-        "twilio/sdk": "^6.13"
+        "twilio/sdk": "^6.13",
+      "ext-curl": "*"
     },
     "require-dev": {
         "doctrine/doctrine-fixtures-bundle": "^3.4",

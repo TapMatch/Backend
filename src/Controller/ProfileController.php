@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Repository\UserRepository;
+use App\Service\OneSignalService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -151,5 +152,16 @@ class ProfileController extends AbstractController
         return $this->json([
             'message' => 'successfully deleted'
         ], 200);
+    }
+
+    /**
+     * @Route("cron", methods="GET")
+     * @param OneSignalService $oneSignalService
+     * @return JsonResponse
+     */
+    public function oneSignal(OneSignalService $oneSignalService)
+    {
+        $oneSignalService->eventStarted();
+        return $this->json([], 200);
     }
 }

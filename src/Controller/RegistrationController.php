@@ -55,14 +55,18 @@ class RegistrationController extends AbstractController
     {
         $data = json_decode($request->getContent(), true);
         $check = $userRepository->findOneBy(['phone' => $data['phone']]);
-
         if ($check) {
+            $check->setUuid(isset($data['uuid']) ?: null);
+            $em->persist($check);
+            $em->flush();
+
             return $this->sendSMS($check);
         }
 
         $newUser = new User();
-        $newUser->setPhone($data['phone'] ?? false);
-        $newUser->setCountryCode($data['country_code'] ?? false);
+        $newUser->setPhone($data['phone']);
+        $newUser->setCountryCode($data['country_code']);
+        $newUser->setUuid(isset($data['uuid']) ?: null);
         $violations = $validator->validate($newUser);
 
         if (count($violations) > 0) {
@@ -80,7 +84,6 @@ class RegistrationController extends AbstractController
                 $authyId = $authyApiUser->id();
                 $newUser->setAuthyId($authyId);
 
-                // save user
                 $em->persist($newUser);
                 $em->flush();
 

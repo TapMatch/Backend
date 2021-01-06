@@ -6,6 +6,7 @@ use App\Entity\Community;
 use App\Entity\Event;
 use App\Repository\EventRepository;
 use App\Serializer\Normalizer\EventNormalizer;
+use App\Service\OneSignalService;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -166,7 +167,7 @@ class EventController extends APIController
         if (!$event) {
             return $this->json([
                 'error' => 'event with this id does not exist'
-            ], 409);
+            ], 400);
         }
         $this->memberExists($event, $community->getEvents(), '', true);
         $this->memberExists($this->getUser(), $event->getMembers(), '', true);
@@ -185,6 +186,7 @@ class EventController extends APIController
      * @param Community $community
      * @param int $eventId
      * @param EventRepository $eventRepository
+     * @param OneSignalService $oneSignalService
      * @return JsonResponse
      * @throws Exception
      */
@@ -192,19 +194,23 @@ class EventController extends APIController
         EntityManagerInterface $em,
         Community $community,
         int $eventId,
-        EventRepository $eventRepository
+        EventRepository $eventRepository,
+        OneSignalService $oneSignalService
     ): JsonResponse
     {
         $event = $eventRepository->find($eventId);
         if (!$event) {
             return $this->json([
                'error' => 'event with this id does not exist'
-            ], 409);
+            ], 400);
         }
-        $this->memberExists($event, $community->getEvents(), '', true);
-        $this->memberExists($this->getUser(), $event->getMembers(), 'event');
-        $event->addMember($this->getUser());
+        $user = $this->getUser();
+//        $this->memberExists($user, $community->getUsers(), '', true);
+//        $this->memberExists($event, $community->getEvents(), '', true);
+//        $this->memberExists($user, $event->getMembers(), 'event');
+        $event->addMember($user);
         $em->flush();
+        $oneSignalService->joinedEvent($event, $user);
 
         return $this->json([
             'message' => 'you joined this event'
