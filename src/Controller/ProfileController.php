@@ -163,10 +163,7 @@ class ProfileController extends AbstractController
     public function oneSignal(OneSignalService $oneSignalService)
     {
         $oneSignalService->eventStarted();
-        $cron = new Cron();
-        $cron->setDatetime(date_create());
-        $this->getDoctrine()->getManager()->persist($cron);
-        $this->getDoctrine()->getManager()->flush();
+
         return $this->json([], 200);
     }
 }
