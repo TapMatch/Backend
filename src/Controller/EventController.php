@@ -205,9 +205,9 @@ class EventController extends APIController
             ], 400);
         }
         $user = $this->getUser();
-//        $this->memberExists($user, $community->getUsers(), '', true);
-//        $this->memberExists($event, $community->getEvents(), '', true);
-//        $this->memberExists($user, $event->getMembers(), 'event');
+        $this->memberExists($user, $community->getUsers(), '', true);
+        $this->memberExists($event, $community->getEvents(), '', true);
+        $this->memberExists($user, $event->getMembers(), 'event');
         $event->addMember($user);
         $em->flush();
         $oneSignalService->joinedEvent($event, $user);
