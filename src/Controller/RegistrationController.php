@@ -56,9 +56,11 @@ class RegistrationController extends AbstractController
         $data = json_decode($request->getContent(), true);
         $check = $userRepository->findOneBy(['phone' => $data['phone']]);
         if ($check) {
-            $check->setUuid(isset($data['uuid']) ?: null);
-            $em->persist($check);
-            $em->flush();
+            if(isset($data['uuid'])) {
+                $check->setUuid($data['uuid']);
+                $em->persist($check);
+                $em->flush();
+            }
 
             return $this->sendSMS($check);
         }

@@ -6,8 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="54701224-65f8-43e0-b5ee-b852ee1df03b" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Controller/EventController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/EventController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Service/OneSignalService.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Service/OneSignalService.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Controller/RegistrationController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/RegistrationController.php" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/vendor/api-platform/api-pack/" />
     <ignored path="$PROJECT_DIR$/vendor/api-platform/core/" />
@@ -145,7 +144,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/Controller/ProfileController.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="545">
+            <state relative-caret-position="2720">
               <caret line="160" column="27" selection-start-line="160" selection-start-column="27" selection-end-line="160" selection-end-column="27" />
               <folding>
                 <element signature="e#34#54#0#PHP" expanded="true" />
@@ -169,8 +168,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/Service/OneSignalService.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="408">
-              <caret line="36" selection-start-line="36" selection-end-line="36" />
+            <state relative-caret-position="288">
+              <caret line="45" column="54" selection-start-line="45" selection-start-column="54" selection-end-line="45" selection-end-column="54" />
               <folding>
                 <element signature="e#31#52#0#PHP" expanded="true" />
               </folding>
@@ -199,11 +198,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/Controller/RegistrationController.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1462">
-              <caret line="86" selection-start-line="86" selection-end-line="86" />
+            <state relative-caret-position="424">
+              <caret line="65" column="9" lean-forward="true" selection-start-line="65" selection-start-column="9" selection-end-line="65" selection-end-column="9" />
               <folding>
                 <element signature="e#34#54#0#PHP" expanded="true" />
               </folding>
@@ -211,11 +210,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/Controller/EventController.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="543">
-              <caret line="210" column="32" selection-start-line="210" selection-start-column="32" selection-end-line="210" selection-end-column="32" />
+            <state relative-caret-position="3468">
+              <caret line="204" column="20" selection-start-line="204" selection-start-column="20" selection-end-line="204" selection-end-column="20" />
               <folding>
                 <element signature="e#34#59#0#PHP" expanded="true" />
               </folding>
@@ -324,10 +323,10 @@
         <option value="$PROJECT_DIR$/src/Controller/CommunityController.php" />
         <option value="$PROJECT_DIR$/src/Entity/Event.php" />
         <option value="$PROJECT_DIR$/src/Repository/EventRepository.php" />
-        <option value="$PROJECT_DIR$/src/Controller/RegistrationController.php" />
         <option value="$PROJECT_DIR$/src/Controller/ProfileController.php" />
-        <option value="$PROJECT_DIR$/src/Service/OneSignalService.php" />
         <option value="$PROJECT_DIR$/src/Controller/EventController.php" />
+        <option value="$PROJECT_DIR$/src/Service/OneSignalService.php" />
+        <option value="$PROJECT_DIR$/src/Controller/RegistrationController.php" />
       </list>
     </option>
   </component>
@@ -465,7 +464,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -499,6 +497,7 @@
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="ProjectViewState">
@@ -601,18 +600,20 @@
       <workItem from="1609169923281" duration="18000" />
       <workItem from="1609917510304" duration="20872000" />
       <workItem from="1609940422171" duration="83000" />
-      <workItem from="1609940537875" duration="170000" />
+      <workItem from="1609940537875" duration="255000" />
+      <workItem from="1609940858010" duration="61000" />
+      <workItem from="1609941853794" duration="67000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="262307000" />
+    <option name="totallyTimeSpent" value="262520000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="25" width="1920" height="1004" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49882352" visible="true" weight="0.24759872" />
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49882352" visible="true" weight="0.2529349" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" sideWeight="0.5011765" side_tool="true" weight="0.2139808" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -943,6 +944,16 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/Controller/ProfileController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2720">
+          <caret line="160" column="27" selection-start-line="160" selection-start-column="27" selection-end-line="160" selection-end-column="27" />
+          <folding>
+            <element signature="e#34#54#0#PHP" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/Entity/User.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="5950">
@@ -970,12 +981,12 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/Controller/RegistrationController.php">
+    <entry file="file://$PROJECT_DIR$/src/Controller/EventController.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1462">
-          <caret line="86" selection-start-line="86" selection-end-line="86" />
+        <state relative-caret-position="3468">
+          <caret line="204" column="20" selection-start-line="204" selection-start-column="20" selection-end-line="204" selection-end-column="20" />
           <folding>
-            <element signature="e#34#54#0#PHP" expanded="true" />
+            <element signature="e#34#59#0#PHP" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -1000,32 +1011,22 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/Controller/ProfileController.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="545">
-          <caret line="160" column="27" selection-start-line="160" selection-start-column="27" selection-end-line="160" selection-end-column="27" />
-          <folding>
-            <element signature="e#34#54#0#PHP" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/Service/OneSignalService.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="408">
-          <caret line="36" selection-start-line="36" selection-end-line="36" />
+        <state relative-caret-position="288">
+          <caret line="45" column="54" selection-start-line="45" selection-start-column="54" selection-end-line="45" selection-end-column="54" />
           <folding>
             <element signature="e#31#52#0#PHP" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/Controller/EventController.php">
+    <entry file="file://$PROJECT_DIR$/src/Controller/RegistrationController.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="543">
-          <caret line="210" column="32" selection-start-line="210" selection-start-column="32" selection-end-line="210" selection-end-column="32" />
+        <state relative-caret-position="424">
+          <caret line="65" column="9" lean-forward="true" selection-start-line="65" selection-start-column="9" selection-end-line="65" selection-end-column="9" />
           <folding>
-            <element signature="e#34#59#0#PHP" expanded="true" />
+            <element signature="e#34#54#0#PHP" expanded="true" />
           </folding>
         </state>
       </provider>
