@@ -42,9 +42,9 @@ class OneSignalService
 
     public function eventStarted()
     {
-        $oneDay = date_add(date_create(date('Y-m-d H:i:00')), date_interval_create_from_date_string('1 day'));
+        $oneDay = date_add(date_create(date('Y-d-m H:i:00')), date_interval_create_from_date_string('1 day'));
         $events['oneDay'] = $this->eventRepository->findBy(['date' => $oneDay]);
-        $oneHour = date_add(date_create(date('Y-m-d H:i:00')), date_interval_create_from_date_string('1 hour'));
+        $oneHour = date_add(date_create(date('Y-d-m H:i:00')), date_interval_create_from_date_string('1 hour'));
         $events['oneHour'] = $this->eventRepository->findBy(['date' => $oneHour]);
         array_map(function ($event) {
             $this->oneSignal($event->getName() . self::ONE_DAY, $this->eventRepository->getMembers($event));
