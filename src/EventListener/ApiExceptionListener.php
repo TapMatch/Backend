@@ -10,20 +10,18 @@ use Symfony\Component\HttpKernel\KernelEvents;
 class ApiExceptionListener implements EventSubscriberInterface
 {
 
-    /**
-     * @param ExceptionEvent $event
-     */
     public function onKernelException(ExceptionEvent $event)
     {
         $error = $event->getThrowable()->getMessage();
         $check = $this->isJson($error);
-        $response = new JsonResponse([
-            'error' => $check ? json_decode($error) : $error
-        ],
-            $event->getThrowable()->getCode() ?: 500
-        );
-
-        $event->setResponse($response);
+        if ($check) {
+            $response = new JsonResponse([
+                'error' => json_decode($error)
+            ],
+                $event->getThrowable()->getCode()
+            );
+            $event->setResponse($response);
+        }
     }
 
     function isJson($string) {

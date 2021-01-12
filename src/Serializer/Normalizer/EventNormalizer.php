@@ -37,6 +37,7 @@ class EventNormalizer implements NormalizerInterface, CacheableSupportsMethodInt
             'description' => $object->getDescription(),
             'join_limit' => $object->getJoinLimit(),
             'joined' => count($object->getMembers()),
+            'community_id' => $object->getCommunity()->getId(),
             'organizer' => [
                 'id' => $object->getOrganizer()->getId(),
                 'name' => $object->getOrganizer()->getFirstName(),

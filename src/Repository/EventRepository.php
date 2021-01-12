@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Event;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -36,6 +37,14 @@ class EventRepository extends ServiceEntityRepository
         return $this->find($event)->getMembers()->map(function ($member) {
             return $member->getUuid();
         })->getValues();
+    }
+
+    public function getEndsEvents()
+    {
+        $criteria = Criteria::create()
+            ->where(Criteria::expr()->lte('date', date_create(date('Y-m-d H:i:00'))));
+        return $this->matching($criteria);
+
     }
 
     // /**

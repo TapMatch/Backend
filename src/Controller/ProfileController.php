@@ -3,8 +3,11 @@
 namespace App\Controller;
 
 use App\Entity\Cron;
+use App\Entity\Event;
+use App\Repository\EventRepository;
 use App\Repository\UserRepository;
 use App\Service\OneSignalService;
+use Doctrine\Common\Collections\Criteria;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -143,8 +146,7 @@ class ProfileController extends AbstractController
             $em = $this->getDoctrine()->getManager();
             $em->remove($this->getUser());
             $em->flush();
-        } catch (\Exception $e)
-        {
+        } catch (\Exception $e) {
             return $this->json([
                 'error' => $e->getMessage()
             ], 400);
@@ -160,10 +162,18 @@ class ProfileController extends AbstractController
      * @param OneSignalService $oneSignalService
      * @return JsonResponse
      */
-    public function oneSignal(OneSignalService $oneSignalService)
+    public function cron(OneSignalService $oneSignalService)
     {
         $oneSignalService->eventStarted();
-
+        $events = $this->getDoctrine()
+            ->getRepository(Event::class)
+            ->getEndsEvents();
+        if ($events) {
+            foreach ($events as $event) {
+                $this->getDoctrine()->getManager()->remove($event);
+            }
+            $this->getDoctrine()->getManager()->flush();
+        }
         return $this->json([], 200);
     }
 }

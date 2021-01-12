@@ -14,6 +14,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 
 /**
  * @Route(requirements={"communityId"="\d+", "eventId"="\d+"})
@@ -73,13 +74,12 @@ class EventController extends APIController
     }
 
     /**
-     * @Route("/api/communities/{community}/events/{event}/", methods={"GET"})
+     * @Route("/api/communities/{community}/events/{event}/", methods="GET")
      * @param EventNormalizer $eventNormalizer
      * @param Community $community
      * @param Event $event
      * @return JsonResponse
      * @throws ExceptionInterface
-     * @throws Exception
      */
     public function show(
         EventNormalizer $eventNormalizer,
@@ -208,12 +208,17 @@ class EventController extends APIController
         $this->memberExists($user, $community->getUsers(), '', true);
         $this->memberExists($event, $community->getEvents(), '', true);
         $this->memberExists($user, $event->getMembers(), 'event');
-        $event->addMember($user);
-        $em->flush();
-        $oneSignalService->joinedEvent($event, $user);
+        if ($event->getMembers()->count() < $event->getJoinLimit()) {
+            $event->addMember($user);
+            $em->flush();
+            $oneSignalService->joinedEvent($event, $user);
 
+            return $this->json([
+                'message' => 'you joined this event'
+            ], 200);
+        }
         return $this->json([
-            'message' => 'you joined this event'
-        ], 200);
+            'error' => 'event is full'
+        ], 422);
     }
 }
