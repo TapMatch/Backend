@@ -211,7 +211,9 @@ class EventController extends APIController
         if ($event->getMembers()->count() < $event->getJoinLimit()) {
             $event->addMember($user);
             $em->flush();
-            $oneSignalService->joinedEvent($event, $user);
+            if($user->id != $event->getOrganizer()) {
+                $oneSignalService->joinedEvent($event, $user);
+            }
 
             return $this->json([
                 'message' => 'you joined this event'
