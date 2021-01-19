@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Community;
 use App\Entity\Event;
+use App\Entity\User;
 use App\Repository\EventRepository;
 use App\Serializer\Normalizer\EventNormalizer;
 use App\Service\OneSignalService;

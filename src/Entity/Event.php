@@ -61,7 +61,7 @@ class Event
 
     /**
      * @ORM\ManyToMany(targetEntity=User::class, inversedBy="events")
-     * ORM\OrderBy({"id" = "DESC"})
+     * @ORM\OrderBy({"id" = "DESC"})
      */
     private $members;
 

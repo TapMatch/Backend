@@ -67,7 +67,9 @@ class EventNormalizer implements NormalizerInterface, CacheableSupportsMethodInt
                     'id' => $user->getId(),
                     'avatar' => $user->getAvatar() ? $this->requestStack->getCurrentRequest()->getUriForPath($user->getAvatar()) : null
                 ];
-            }, $object->getMembers()->slice(0, 5))
+            }, $object->getMembers()->filter(function (User $user) use ($object) {
+                return $user->getId() != $object->getOrganizer()->getId();
+            })->slice(0,5))
         ];
 
         return in_array('index', $context)
