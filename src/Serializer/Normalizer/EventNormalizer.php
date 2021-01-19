@@ -28,30 +28,51 @@ class EventNormalizer implements NormalizerInterface, CacheableSupportsMethodInt
 
     public function normalize($object, $format = null, array $context = []): array
     {
-        return [
+        $default = [
             'id' => $object->getId(),
             'name' => $object->getName(),
-            'datetime' => $object->getDate(),
-            'address' => $object->getAddress(),
             'coordinates' => $object->getCoordinates(),
-            'description' => $object->getDescription(),
-            'join_limit' => $object->getJoinLimit(),
-            'joined' => count($object->getMembers()),
             'community_id' => $object->getCommunity()->getId(),
             'organizer' => [
                 'id' => $object->getOrganizer()->getId(),
+                'avatar' => $object->getOrganizer()->getAvatar()
+                    ? $this->requestStack->getCurrentRequest()->getUriForPath($object->getOrganizer()->getAvatar())
+                    : null,
+            ]
+        ];
+
+        $additional = [
+            'datetime' => $object->getDate(),
+            'address' => $object->getAddress(),
+            'description' => $object->getDescription(),
+            'join_limit' => $object->getJoinLimit(),
+            'joined' => count($object->getMembers()),
+            'organizer' => [
                 'name' => $object->getOrganizer()->getFirstName(),
-                'avatar' => $object->getOrganizer()->getAvatar() ? $this->requestStack->getCurrentRequest()->getUriForPath($object->getOrganizer()->getAvatar()): null,
-                ],
+            ],
             'members' => array_map(function (User $user) use ($context) {
                 return [
                     'id' => $user->getId(),
                     'name' => $user->getFirstName(),
                     'phone' => $user->getPhone(),
-                    'avatar' => $user->getAvatar() ? $this->requestStack->getCurrentRequest()->getUriForPath($user->getAvatar()): null
+                    'avatar' => $user->getAvatar() ? $this->requestStack->getCurrentRequest()->getUriForPath($user->getAvatar()) : null
                 ];
             }, $object->getMembers()->toArray())
+
         ];
+
+        $last_members = [
+            'last_members' => array_map(function (User $user) {
+                return [
+                    'id' => $user->getId(),
+                    'avatar' => $user->getAvatar() ? $this->requestStack->getCurrentRequest()->getUriForPath($user->getAvatar()) : null
+                ];
+            }, $object->getMembers()->slice(0, 5))
+        ];
+
+        return in_array('index', $context)
+            ? $default + $last_members
+            : array_merge_recursive($default, $additional);
     }
 
     public function supportsNormalization($data, $format = null): bool

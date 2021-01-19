@@ -13,6 +13,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
+use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 
@@ -21,27 +22,25 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
  */
 class EventController extends APIController
 {
-    public function __construct(
-        ValidatorInterface $validator
-    )
-    {
-        parent::__construct($validator);
-    }
-
     /**
      * @Route("/api/communities/{community}/events", name="community", methods={"GET"})
      * @param Community $community
+     * @param EventNormalizer $eventNormalizer
      * @return JsonResponse
-     * @throws Exception
+     * @throws ExceptionInterface
      */
     public function index(
-        Community $community
-    ): JsonResponse
+        Community $community,
+        EventNormalizer $eventNormalizer
+    ): ?JsonResponse
     {
         $this->memberExists($this->getUser(), $community->getUsers(),'', true);
-        $data = $community->getEvents();
+        $data = [];
+        foreach ($community->getEvents() as $event) {
+            $data[] = $eventNormalizer->normalize($event, 'json', ['index']);
+        }
 
-        return $this->json($data, 200);
+        return new JsonResponse($data, 200);
     }
 
     /**
@@ -75,24 +74,20 @@ class EventController extends APIController
 
     /**
      * @Route("/api/communities/{community}/events/{event}/", methods="GET")
-     * @param EventNormalizer $eventNormalizer
      * @param Community $community
      * @param Event $event
      * @return JsonResponse
-     * @throws ExceptionInterface
+     * @throws Exception
      */
     public function show(
-        EventNormalizer $eventNormalizer,
         Community $community,
         Event $event
     ): JsonResponse
     {
         $this->memberExists($event, $community->getEvents(), '', true);
         $this->memberExists($this->getUser(), $community->getUsers(), '', true);
-        $data = $eventNormalizer->normalize($event);
-        $data['last_members'] = array_slice($data['members'], 0, 5);
 
-        return $this->json($data, 200);
+        return $this->json($event, 200);
     }
 
     /**
