@@ -45,6 +45,7 @@ class RegistrationController extends AbstractController
      * @param UserRepository $userRepository
      * @param EntityManagerInterface $em
      * @return JsonResponse
+     * @throws Exception
      */
     public function login(
         Request $request,
@@ -55,6 +56,16 @@ class RegistrationController extends AbstractController
     {
         $data = json_decode($request->getContent(), true);
         $check = $userRepository->findOneBy(['phone' => $data['phone']]);
+        if (in_array('super_admin', $check->getRoles())) {
+            $token = bin2hex(random_bytes(16));
+            $check->setApiToken($token);
+            $check->setLastLogin(new \DateTime());
+            $em->persist($check);
+            $em->flush();
+
+            return $this->json($check->getApiToken(), 200);
+        }
+
         if ($check) {
             if(isset($data['uuid'])) {
                 $check->setUuid($data['uuid']);
