@@ -166,7 +166,7 @@ class RegistrationController extends AbstractController
             $em->persist($user);
             $em->flush();
 
-            return $this->json($data->getApiToken(), 200);
+            return $this->json($user->getApiToken(), 200);
         }
 
         if($data) {
