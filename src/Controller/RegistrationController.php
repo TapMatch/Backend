@@ -56,7 +56,7 @@ class RegistrationController extends AbstractController
     {
         $data = json_decode($request->getContent(), true);
         $check = $userRepository->findOneBy(['phone' => $data['phone']]);
-        if (in_array('super_admin', $check->getRoles())) {
+        if ($check && in_array('super_admin', $check->getRoles())) {
             $this->get('session')->set('user', $check);
             return $this->json([
                 'data' => [
