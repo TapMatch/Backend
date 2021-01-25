@@ -57,13 +57,13 @@ class RegistrationController extends AbstractController
         $data = json_decode($request->getContent(), true);
         $check = $userRepository->findOneBy(['phone' => $data['phone']]);
         if (in_array('super_admin', $check->getRoles())) {
-            $token = bin2hex(random_bytes(16));
-            $check->setApiToken($token);
-            $check->setLastLogin(new \DateTime());
-            $em->persist($check);
-            $em->flush();
-
-            return $this->json($check->getApiToken(), 200);
+            $this->get('session')->set('user', $check);
+            return $this->json([
+                'data' => [
+                    'phone' => $check->getPhone()
+                ],
+                'Cookie' => 'PHPSESSID=' . session_id()
+            ], 200);
         }
 
         if ($check) {
@@ -158,6 +158,17 @@ class RegistrationController extends AbstractController
 
         // Get data from session
         $data = $this->getUser();
+        if (in_array('super_admin', $data->getRoles())) {
+            $user = $this->getDoctrine()->getRepository(User::class)->findOneBy(['phone' => $data->getPhone()]);
+            $token = bin2hex(random_bytes(16));
+            $user->setApiToken($token);
+            $user->setLastLogin(new \DateTime());
+            $em->persist($user);
+            $em->flush();
+
+            return $this->json($data->getApiToken(), 200);
+        }
+
         if($data) {
             $verification = $this->authyApi->verifyToken($data->getAuthyId(), $code['verify_code']);
             if ($verification->ok()) {
