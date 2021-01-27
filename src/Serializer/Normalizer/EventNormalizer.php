@@ -4,7 +4,7 @@ namespace App\Serializer\Normalizer;
 
 use App\Entity\User;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\HttpFoundation\UrlHelper;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Serializer\Normalizer\CacheableSupportsMethodInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
@@ -15,19 +15,24 @@ class EventNormalizer implements NormalizerInterface, CacheableSupportsMethodInt
 
     private $requestStack;
 
+    private $tokenStorage;
+
     /**
      * EventNormalizer constructor.
      * @param ObjectNormalizer $normalizer
      * @param RequestStack $requestStack
+     * @param TokenStorageInterface $tokenStorage
      */
-    public function __construct(ObjectNormalizer $normalizer, RequestStack $requestStack)
+    public function __construct(ObjectNormalizer $normalizer, RequestStack $requestStack, TokenStorageInterface $tokenStorage)
     {
         $this->requestStack = $requestStack;
         $this->normalizer = $normalizer;
+        $this->tokenStorage = $tokenStorage;
     }
 
     public function normalize($object, $format = null, array $context = []): array
     {
+        $user = $this->tokenStorage->getToken()->getUser();
         $default = [
             'id' => $object->getId(),
             'name' => $object->getName(),
@@ -42,7 +47,7 @@ class EventNormalizer implements NormalizerInterface, CacheableSupportsMethodInt
         ];
 
         $additional = [
-            'datetime' => $object->getDate(),
+            'datetime' => $object->getDate()->setTimezone(new \DateTimeZone($user->getTimezone())),
             'address' => $object->getAddress(),
             'description' => $object->getDescription(),
             'join_limit' => $object->getJoinLimit(),
@@ -60,16 +65,14 @@ class EventNormalizer implements NormalizerInterface, CacheableSupportsMethodInt
             }, $object->getMembers()->toArray())
 
         ];
-
+        $object->getMembers()->removeElement($object->getOrganizer());
         $last_members = [
-            'last_members' => array_map(function (User $user) {
+            'last_members' => $object->getMembers()->map(function (User $user) use ($object) {
                 return [
                     'id' => $user->getId(),
                     'avatar' => $user->getAvatar() ? $this->requestStack->getCurrentRequest()->getUriForPath($user->getAvatar()) : null
                 ];
-            }, $object->getMembers()->filter(function (User $user) use ($object) {
-                return $user->getId() != $object->getOrganizer()->getId();
-            })->slice(0,5))
+            })->slice(0, 5)
         ];
 
         return in_array('index', $context)
