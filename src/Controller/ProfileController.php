@@ -174,4 +174,18 @@ class ProfileController extends AbstractController
         }
         return $this->json([], 200);
     }
+
+    /**
+     * @Route("/api/profile/timezone", methods="PATCH")
+     */
+    public function setTimezone(Request $request)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $data = json_decode($request->getContent(), true);
+        $user = $this->getUser()->setTimezone($data['timezone']);
+        $em->persist($user);
+        $em->flush();
+
+        return $this->json('success', 200);
+    }
 }
