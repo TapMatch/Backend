@@ -180,7 +180,8 @@ class RegistrationController extends AbstractController
                 # Create new API key (token)
                 $token = bin2hex(random_bytes(16));
                 $user->setApiToken($token);
-                $user->setLastLogin(new DateTime(date('Y-m-d H:i:00'), new DateTimeZone($dataRequest['timezone'])));
+                $user->setLastLogin(new DateTime(date('Y-m-d H:i:00')));
+                $user->setTimezone($dataRequest['timezone']);
                 $em->persist($user);
                 $em->flush();
 
