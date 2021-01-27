@@ -43,7 +43,7 @@ class EventRepository extends ServiceEntityRepository
     {
         $criteria = Criteria::create()
             ->where(Criteria::expr()->lte('date', date_create(date('Y-m-d H:i:00'))));
-        return $this->matching($criteria);
+        return $this->matching($criteria)->getValues();
 
     }
 

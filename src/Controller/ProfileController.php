@@ -162,7 +162,7 @@ class ProfileController extends AbstractController
      * @param OneSignalService $oneSignalService
      * @return JsonResponse
      */
-    public function cron(OneSignalService $oneSignalService)
+    public function cron(OneSignalService $oneSignalService): JsonResponse
     {
         $oneSignalService->eventStarted();
         $events = $this->getDoctrine()

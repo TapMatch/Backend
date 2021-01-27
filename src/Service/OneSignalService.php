@@ -10,7 +10,7 @@ class OneSignalService
 {
     private $eventRepository;
 
-    private const JOINED = ' joined the event';
+    private const JOINED = ' joined the ';
 
     private const FULLNESS = ' is almost full';
 
@@ -31,20 +31,20 @@ class OneSignalService
      * @param Event $event
      * @param User $user
      */
-    public function joinedEvent($event, $user)
+    public function joinedEvent(Event $event, User $user)
     {
         $members = $this->eventRepository->getMembers($event);
         $joined = $event->getJoinLimit();
         $fullness = count($members)/$joined;
-        $this->oneSignal($user->getFirstName() . self::JOINED, $members);
+        $this->oneSignal($user->getFirstName() . self::JOINED . $event->getName(), $members);
         $fullness < 0.7 ?: $this->oneSignal($event->getName() . self::FULLNESS, $members);
     }
 
     public function eventStarted()
     {
-        $oneDay = date_add(date_create(date('Y-d-m H:i:00')), date_interval_create_from_date_string('1 day'));
+        $oneDay = date_add(date_create(date('Y-m-d H:i:00')), date_interval_create_from_date_string('1 day'));
         $events['oneDay'] = $this->eventRepository->findBy(['date' => $oneDay]);
-        $oneHour = date_add(date_create(date('Y-d-m H:i:00')), date_interval_create_from_date_string('1 hour'));
+        $oneHour = date_add(date_create(date('Y-m-d H:i:00')), date_interval_create_from_date_string('1 hour'));
         $events['oneHour'] = $this->eventRepository->findBy(['date' => $oneHour]);
         array_map(function ($event) {
             $this->oneSignal($event->getName() . self::ONE_DAY, $this->eventRepository->getMembers($event));
