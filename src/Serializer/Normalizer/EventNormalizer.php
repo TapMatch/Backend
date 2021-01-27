@@ -37,6 +37,8 @@ class EventNormalizer implements NormalizerInterface, CacheableSupportsMethodInt
             'id' => $object->getId(),
             'name' => $object->getName(),
             'coordinates' => $object->getCoordinates(),
+            'join_limit' => $object->getJoinLimit(),
+            'joined' => count($object->getMembers()),
             'community_id' => $object->getCommunity()->getId(),
             'organizer' => [
                 'id' => $object->getOrganizer()->getId(),
@@ -50,8 +52,6 @@ class EventNormalizer implements NormalizerInterface, CacheableSupportsMethodInt
             'datetime' => $object->getDate()->setTimezone(new \DateTimeZone($user->getTimezone())),
             'address' => $object->getAddress(),
             'description' => $object->getDescription(),
-            'join_limit' => $object->getJoinLimit(),
-            'joined' => count($object->getMembers()),
             'organizer' => [
                 'name' => $object->getOrganizer()->getFirstName(),
             ],

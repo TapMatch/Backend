@@ -62,6 +62,8 @@ class EventController extends APIController
         $this->memberExists($this->getUser(), $community->getUsers(), '', true);
         $event = new Event();
         $data['user'] = $this->getUser();
+        $data['date'] = \DateTime::createFromFormat('Y-d-m H:i', $data['date'], new \DateTimeZone($data['user']->getTimezone()))
+            ->setTimezone(new \DateTimeZone(date_default_timezone_get()));
         $event->setData($data);
         $this->isValid($event);
 

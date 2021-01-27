@@ -104,6 +104,11 @@ class User implements UserInterface
      */
     private $uuid;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $timezone;
+
     public function __construct()
     {
         $this->communities = new ArrayCollection();
@@ -359,6 +364,18 @@ class User implements UserInterface
     public function setUuid(?string $uuid): self
     {
         $this->uuid = $uuid;
+
+        return $this;
+    }
+
+    public function getTimezone(): ?string
+    {
+        return $this->timezone;
+    }
+
+    public function setTimezone(?string $timezone): self
+    {
+        $this->timezone = $timezone;
 
         return $this;
     }

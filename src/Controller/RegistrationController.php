@@ -2,9 +2,12 @@
 
 namespace App\Controller;
 
+use App\Entity\Event;
 use App\Entity\User;
 use App\Repository\UserRepository;
 use Authy\AuthyApi;
+use DateTime;
+use DateTimeZone;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Exception;
@@ -154,15 +157,15 @@ class RegistrationController extends AbstractController
         EntityManagerInterface $em
     ): JsonResponse
     {
-        $code = json_decode($request->getContent(), true);
-
+        $dataRequest = json_decode($request->getContent(), true);
         // Get data from session
         $data = $this->getUser();
         if (in_array('super_admin', $data->getRoles())) {
-            $user = $this->getDoctrine()->getRepository(User::class)->findOneBy(['phone' => $data->getPhone()]);
+            $user = $em->getRepository(User::class)->findOneBy(['phone' => $data->getPhone()]);
             $token = bin2hex(random_bytes(16));
             $user->setApiToken($token);
-            $user->setLastLogin(new \DateTime());
+            $user->setLastLogin(new DateTime(date('Y-m-d H:i:00')));
+            $user->setTimezone($dataRequest['timezone']);
             $em->persist($user);
             $em->flush();
 
@@ -170,14 +173,14 @@ class RegistrationController extends AbstractController
         }
 
         if($data) {
-            $verification = $this->authyApi->verifyToken($data->getAuthyId(), $code['verify_code']);
+            $verification = $this->authyApi->verifyToken($data->getAuthyId(), $dataRequest['verify_code']);
             if ($verification->ok()) {
                 $user = $userRepository->findOneBy(['phone' => $data->getPhone()]) ?? $data;
 
                 # Create new API key (token)
                 $token = bin2hex(random_bytes(16));
                 $user->setApiToken($token);
-                $user->setLastLogin(new \DateTime());
+                $user->setLastLogin(new DateTime(date('Y-m-d H:i:00'), new DateTimeZone($dataRequest['timezone'])));
                 $em->persist($user);
                 $em->flush();
 
