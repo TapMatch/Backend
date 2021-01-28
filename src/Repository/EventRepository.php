@@ -32,7 +32,7 @@ class EventRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public function getMembers($event, $user)
+    public function getMembers($event, $user = [])
     {
         $event = $this->find($event);
         $event->getMembers()->removeElement($user);
