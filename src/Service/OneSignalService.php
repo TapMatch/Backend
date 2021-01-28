@@ -33,7 +33,7 @@ class OneSignalService
      */
     public function joinedEvent(Event $event, User $user)
     {
-        $members = $this->eventRepository->getMembers($event);
+        $members = $this->eventRepository->getMembers($event, $user);
         $joined = $event->getJoinLimit();
         $fullness = count($members)/$joined;
         $this->oneSignal($user->getFirstName() . self::JOINED . $event->getName(), $members);
