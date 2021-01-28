@@ -65,18 +65,20 @@ class EventNormalizer implements NormalizerInterface, CacheableSupportsMethodInt
             }, $object->getMembers()->toArray())
 
         ];
+
         $object->getMembers()->removeElement($object->getOrganizer());
+
         $last_members = [
-            'last_members' => $object->getMembers()->map(function (User $user) use ($object) {
+            'last_members' => array_values($object->getMembers()->map(function (User $user) {
                 return [
                     'id' => $user->getId(),
                     'avatar' => $user->getAvatar() ? $this->requestStack->getCurrentRequest()->getUriForPath($user->getAvatar()) : null
                 ];
-            })->slice(0, 5)
+            })->slice(0, 5))
         ];
 
         return in_array('index', $context)
-            ? $default + $last_members
+            ? array_merge_recursive($default, $last_members)
             : array_merge_recursive($default, $additional);
     }
 
