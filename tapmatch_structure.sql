@@ -33,16 +33,6 @@ CREATE TABLE `community` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `community`
---
-
-LOCK TABLES `community` WRITE;
-/*!40000 ALTER TABLE `community` DISABLE KEYS */;
-INSERT INTO `community` VALUES (3,'UvA','000007','Amsterdam',0),(6,'UCL','006996','London',0),(10,'TUM','120021','Munich',0),(15,'Open World',NULL,'',1);
-/*!40000 ALTER TABLE `community` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `community_user`
 --
 
@@ -61,15 +51,6 @@ CREATE TABLE `community_user` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `community_user`
---
-
-LOCK TABLES `community_user` WRITE;
-/*!40000 ALTER TABLE `community_user` DISABLE KEYS */;
-/*!40000 ALTER TABLE `community_user` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `cron`
 --
 
@@ -80,17 +61,8 @@ CREATE TABLE `cron` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `datetime` datetime NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `cron`
---
-
-LOCK TABLES `cron` WRITE;
-/*!40000 ALTER TABLE `cron` DISABLE KEYS */;
-/*!40000 ALTER TABLE `cron` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `doctrine_migration_versions`
@@ -106,16 +78,6 @@ CREATE TABLE `doctrine_migration_versions` (
   PRIMARY KEY (`version`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `doctrine_migration_versions`
---
-
-LOCK TABLES `doctrine_migration_versions` WRITE;
-/*!40000 ALTER TABLE `doctrine_migration_versions` DISABLE KEYS */;
-INSERT INTO `doctrine_migration_versions` VALUES ('DoctrineMigrations\\Version20201124150212','2021-02-10 17:23:45',34),('DoctrineMigrations\\Version20201124152726','2021-02-10 17:23:46',35),('DoctrineMigrations\\Version20201125150409','2021-02-10 17:23:46',32),('DoctrineMigrations\\Version20201125151954','2021-02-10 17:23:46',33),('DoctrineMigrations\\Version20201130152741','2021-02-10 17:23:46',30),('DoctrineMigrations\\Version20201203082053','2021-02-10 17:23:46',26),('DoctrineMigrations\\Version20201203112144','2021-02-10 17:23:46',29),('DoctrineMigrations\\Version20201203120750','2021-02-10 17:23:46',13),('DoctrineMigrations\\Version20201203121456','2021-02-10 17:23:46',67),('DoctrineMigrations\\Version20201203122129','2021-02-10 17:23:46',15),('DoctrineMigrations\\Version20201203122515','2021-02-10 17:23:46',142),('DoctrineMigrations\\Version20201203123615','2021-02-10 17:23:46',85),('DoctrineMigrations\\Version20201203123842','2021-02-10 17:23:46',36),('DoctrineMigrations\\Version20201203131141','2021-02-10 17:23:46',68),('DoctrineMigrations\\Version20201203131921','2021-02-10 17:23:46',97),('DoctrineMigrations\\Version20201203132243','2021-02-10 17:23:46',177),('DoctrineMigrations\\Version20201203170144','2021-02-10 17:23:46',20),('DoctrineMigrations\\Version20201203172235','2021-02-10 17:23:47',137),('DoctrineMigrations\\Version20201204100134','2021-02-10 17:23:47',73),('DoctrineMigrations\\Version20201207133509','2021-02-10 17:23:47',26),('DoctrineMigrations\\Version20201208101516','2021-02-10 17:23:47',27),('DoctrineMigrations\\Version20201208101529','2021-02-10 17:23:47',0),('DoctrineMigrations\\Version20201208124516','2021-02-10 17:23:47',20),('DoctrineMigrations\\Version20201209170220','2021-02-10 17:23:47',24),('DoctrineMigrations\\Version20201211145730','2021-02-10 17:23:47',34),('DoctrineMigrations\\Version20201212145246','2021-02-10 17:23:47',34),('DoctrineMigrations\\Version20201225092326','2021-02-10 17:23:47',32),('DoctrineMigrations\\Version20201225093349','2021-02-10 17:23:47',4),('DoctrineMigrations\\Version20201225093824','2021-02-10 17:23:47',29),('DoctrineMigrations\\Version20201225093856','2021-02-10 17:23:47',26),('DoctrineMigrations\\Version20210106072937','2021-02-10 17:23:47',54),('DoctrineMigrations\\Version20210106132608','2021-02-10 17:23:47',13);
-/*!40000 ALTER TABLE `doctrine_migration_versions` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `event`
@@ -139,17 +101,8 @@ CREATE TABLE `event` (
   KEY `IDX_3BAE0AA7FDA7B0BF` (`community_id`),
   CONSTRAINT `FK_3BAE0AA7876C4DDA` FOREIGN KEY (`organizer_id`) REFERENCES `user` (`id`),
   CONSTRAINT `FK_3BAE0AA7FDA7B0BF` FOREIGN KEY (`community_id`) REFERENCES `community` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=259 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `event`
---
-
-LOCK TABLES `event` WRITE;
-/*!40000 ALTER TABLE `event` DISABLE KEYS */;
-/*!40000 ALTER TABLE `event` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `event_user`
@@ -168,15 +121,6 @@ CREATE TABLE `event_user` (
   CONSTRAINT `FK_92589AE2A76ED395` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `event_user`
---
-
-LOCK TABLES `event_user` WRITE;
-/*!40000 ALTER TABLE `event_user` DISABLE KEYS */;
-/*!40000 ALTER TABLE `event_user` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `user`
@@ -198,20 +142,12 @@ CREATE TABLE `user` (
   `authy_id` int(11) NOT NULL,
   `finished_onboarding` tinyint(1) NOT NULL,
   `uuid` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `timezone` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `UNIQ_8D93D649444F97DD` (`phone`),
   UNIQUE KEY `UNIQ_8D93D6497BA2F5EB` (`api_token`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=100 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `user`
---
-
-LOCK TABLES `user` WRITE;
-/*!40000 ALTER TABLE `user` DISABLE KEYS */;
-/*!40000 ALTER TABLE `user` ENABLE KEYS */;
-UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -222,4 +158,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-02-10 17:24:34
+-- Dump completed on 2021-02-10 17:59:25
