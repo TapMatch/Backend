@@ -57,7 +57,12 @@ class OneSignalService
 
     private function oneSignal(string $message, $to, $id)
     {
-        $getEvent = $this->eventRepository->findOneBy(['id' => $id]);
+        if($this->eventRepository->findOneBy(['id' => $id])) {
+            $getEvent = $this->eventRepository->findOneBy(['id' => $id]);
+        }
+        else {
+            $getEvent = 'not found';
+        }
 
         $content = [
             'en' => $message
@@ -66,7 +71,7 @@ class OneSignalService
             'app_id' => self::APP_ID,
             'include_player_ids' => $to,
             'contents' => $content,
-            'data' => $getEvent
+            'data' => json_encode($getEvent)
         ];
 
         $fields = json_encode($fields);
