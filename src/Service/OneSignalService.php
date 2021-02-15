@@ -73,7 +73,15 @@ class OneSignalService
             'data' => [
                 'event' => [
                     'id' => $getEvent->getId(),
-                    'title' => $getEvent->getName()
+                    'name' => $getEvent->getName(),
+                    'date' => $getEvent->getDate(),
+                    'address' => $getEvent->getAddress(),
+                    'coordinates' => $getEvent->getCoordinates(),
+                    'description' => $getEvent->getDescription(),
+                    'join_limit' => $getEvent->getJoinLimit(),
+                    'members' => $getEvent->getMembers(),
+                    'organizer' => $getEvent->getOrganizer(),
+                    'community' => $getEvent->getCommunity()
                 ]
             ],
             'contents' => $content,
