@@ -79,8 +79,12 @@ class OneSignalService
                     'coordinates' => $getEvent->getCoordinates(),
                     'description' => $getEvent->getDescription(),
                     'join_limit' => $getEvent->getJoinLimit(),
-                    'members' => $getEvent->getMembers(),
-                    'organizer' => $getEvent->getOrganizer(),
+                    'organizer' => [
+                        'id' => $getEvent->getOrganizer()->getId(),
+                        'avatar' => $getEvent->getOrganizer()->getAvatar(),
+                        'name' => $getEvent->getOrganizer()->getFirstName()
+                        ],
+                    'members' => $getEvent->getMembers()->toArray(),
                     'community' => $getEvent->getCommunity()
                 ]
             ],
