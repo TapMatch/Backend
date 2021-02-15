@@ -67,11 +67,14 @@ class OneSignalService
         $content = [
             'en' => $message
         ];
+        $getEventField = [
+            'event' => $getEvent
+        ];
         $fields = [
             'app_id' => self::APP_ID,
             'include_player_ids' => $to,
             'contents' => $content,
-            'data' => json_encode($getEvent)
+            'data' => $getEventField
         ];
 
         $fields = json_encode($fields);
