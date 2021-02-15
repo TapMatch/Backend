@@ -5,10 +5,12 @@ namespace App\Service;
 use App\Entity\Event;
 use App\Entity\User;
 use App\Repository\EventRepository;
+use App\Repository\UserRepository;
 
 class OneSignalService
 {
     private $eventRepository;
+    private $userRepository;
 
     private const JOINED = ' joined the ';
 
@@ -22,9 +24,10 @@ class OneSignalService
 
     private const API_KEY = 'N2NlYTMzOTItNDc2Ny00ODY3LWE5OGYtOWQ1Y2NmMWE4ZDYx';
 
-    public function __construct(EventRepository $repository)
+    public function __construct(EventRepository $repository, UserRepository $userRepo)
     {
         $this->eventRepository = $repository;
+        $this->userRepository = $userRepo;
     }
 
     /**
@@ -57,12 +60,8 @@ class OneSignalService
 
     private function oneSignal(string $message, $to, $id)
     {
-        if($this->eventRepository->findOneBy(['id' => $id])) {
-            $getEvent = $this->eventRepository->findOneBy(['id' => $id]);
-        }
-        else {
-            $getEvent = 'not found';
-        }
+        $getEvent = $this->eventRepository->findOneBy(['id' => $id]);
+        $getMemberEvent = $this->userRepository->findOneBy(['events' => $id]);
 
         $content = [
             'en' => $message
@@ -84,8 +83,13 @@ class OneSignalService
                         'avatar' => $getEvent->getOrganizer()->getAvatar(),
                         'name' => $getEvent->getOrganizer()->getFirstName()
                         ],
-                    'members' => $getEvent->getMembers()->toArray(),
-                    'community' => $getEvent->getCommunity()
+                    'members' => [
+                        'id' => $getMemberEvent->getId(),
+                        'name' => $getMemberEvent->getFirstName(),
+                        'phone' => $getMemberEvent->getPhone(),
+                        'avatar' => $getMemberEvent->getAvatar()
+                    ],
+                    'community_id' => $getEvent->getCommunity()->getId()
                 ]
             ],
             'contents' => $content,
