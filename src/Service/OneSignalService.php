@@ -34,10 +34,11 @@ class OneSignalService
     public function joinedEvent(Event $event, User $user)
     {
         $members = $this->eventRepository->getMembers($event, $user);
+        $idEvent = $event->getId();
         $joined = $event->getJoinLimit();
         $fullness = count($members)/$joined;
-        $this->oneSignal($user->getFirstName() . self::JOINED . $event->getName(), $members);
-        $fullness < 0.7 ?: $this->oneSignal($event->getName() . self::FULLNESS, $members);
+        $this->oneSignal($user->getFirstName() . self::JOINED . $event->getName(), $members, $idEvent);
+        $fullness < 0.7 ?: $this->oneSignal($event->getName() . self::FULLNESS, $members, $idEvent);
     }
 
     public function eventStarted()
@@ -47,15 +48,17 @@ class OneSignalService
         $oneHour = date_add(date_create(date('Y-m-d H:i:00')), date_interval_create_from_date_string('1 hour'));
         $events['oneHour'] = $this->eventRepository->findBy(['date' => $oneHour]);
         array_map(function ($event) {
-            $this->oneSignal($event->getName() . self::ONE_DAY, $this->eventRepository->getMembers($event));
+            $this->oneSignal($event->getName() . self::ONE_DAY, $this->eventRepository->getMembers($event), $event->getId());
         }, $events['oneDay']);
         array_map(function ($event) {
-            $this->oneSignal($event->getName() . self::ONE_HOUR, $this->eventRepository->getMembers($event));
+            $this->oneSignal($event->getName() . self::ONE_HOUR, $this->eventRepository->getMembers($event), $event->getId());
         }, $events['oneHour']);
     }
 
-    private function oneSignal(string $message, $to)
+    private function oneSignal(string $message, $to, $id)
     {
+        $getEvent = $this->eventRepository->findOneBy(['id' => $id]);
+
         $content = [
             'en' => $message
         ];
@@ -63,6 +66,7 @@ class OneSignalService
             'app_id' => self::APP_ID,
             'include_player_ids' => $to,
             'contents' => $content,
+            'data' => $getEvent
         ];
 
         $fields = json_encode($fields);
