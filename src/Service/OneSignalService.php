@@ -74,28 +74,28 @@ class OneSignalService
                 'event' => [
                     'id' => $getEvent->getId(),
                     'name' => $getEvent->getName(),
-                    'date' => $getEvent->getDate(),
+                    'datetime' => $getEvent->getDate(),
                     'address' => $getEvent->getAddress(),
                     'coordinates' => $getEvent->getCoordinates(),
                     'description' => $getEvent->getDescription(),
                     'join_limit' => $getEvent->getJoinLimit(),
+                    'joined' => count($getEvent->getMembers()),
                     'organizer' => [
                         'id' => $getEvent->getOrganizer()->getId(),
-                        'avatar' => $getEvent->getOrganizer()->getAvatar(),
+                        'avatar' => 'http://159.65.199.71' . $getEvent->getOrganizer()->getAvatar(),
                         'name' => $getEvent->getOrganizer()->getFirstName()
                         ],
-                    'members' => [array_map(function (User $user) use ($context) {
+                    'members' => array_map(function (User $user) use ($context) {
                                 return [
                                     'id' => $user->getId(),
                                     'name' => $user->getFirstName(),
                                     'phone' => $user->getPhone(),
-                                    'avatar' => $user->getAvatar()
+                                    'avatar' => 'http://159.65.199.71' . $user->getAvatar()
                                 ];
-                            }, $getEvent->getMembers()->toArray())
-                        ]
-                ],
+                            }, $getEvent->getMembers()->toArray()),
                     'community_id' => $getEvent->getCommunity()->getId()
                 ],
+            ],
             'contents' => $content,
         ];
 
