@@ -6,6 +6,7 @@ use App\Entity\Event;
 use App\Entity\User;
 use App\Repository\EventRepository;
 use App\Repository\UserRepository;
+use phpDocumentor\Reflection\Types\Object_;
 
 class OneSignalService
 {
@@ -61,7 +62,7 @@ class OneSignalService
     private function oneSignal(string $message, $to, $id)
     {
         $getEvent = $this->eventRepository->findOneBy(['id' => $id]);
-        $getMemberEvent = $this->userRepository->findOneBy(['events' => $id]);
+        $context = [];
 
         $content = [
             'en' => $message
@@ -83,15 +84,18 @@ class OneSignalService
                         'avatar' => $getEvent->getOrganizer()->getAvatar(),
                         'name' => $getEvent->getOrganizer()->getFirstName()
                         ],
-                    'members' => [
-                        'id' => $getMemberEvent->getId(),
-                        'name' => $getMemberEvent->getFirstName(),
-                        'phone' => $getMemberEvent->getPhone(),
-                        'avatar' => $getMemberEvent->getAvatar()
-                    ],
+                    'members' => [array_map(function (User $user) use ($context) {
+                                return [
+                                    'id' => $user->getId(),
+                                    'name' => $user->getFirstName(),
+                                    'phone' => $user->getPhone(),
+                                    'avatar' => $user->getAvatar()
+                                ];
+                            }, $getEvent->getMembers()->toArray())
+                        ]
+                ],
                     'community_id' => $getEvent->getCommunity()->getId()
-                ]
-            ],
+                ],
             'contents' => $content,
         ];
 
