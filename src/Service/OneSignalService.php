@@ -13,13 +13,13 @@ class OneSignalService
     private $eventRepository;
     private $userRepository;
 
-    private const JOINED = ' joined the ';
+    private const JOINED = ' joined ';
 
     private const FULLNESS = ' is almost full';
 
-    private const ONE_DAY = '  is starting in 24 hours';
+    private const ONE_DAY = ' is starting in 24 hours';
 
-    private const ONE_HOUR = '  is starting in 1 hour';
+    private const ONE_HOUR = ' is starting in 1 hour';
 
     private const APP_ID = 'b6013fa6-1fc9-4afa-8236-4dd009fd798d';
 
