@@ -93,20 +93,11 @@ class RegistrationController extends AbstractController
 
             return $this->json($errors, 422);
         } else {
-            $authyApiUser = $this->authyApi->registerUser('test@test.com', $data['phone'], $data['country_code'], false);
+            $newUser->setAuthyId(rand(10,1000));
+            $em->persist($newUser);
+            $em->flush();
 
-            if ($authyApiUser->ok()) {
-
-                $authyId = $authyApiUser->id();
-                $newUser->setAuthyId($authyId);
-
-                $em->persist($newUser);
-                $em->flush();
-
-                return $this->sendSMS($newUser);
-            }
-
-            return $this->json($authyApiUser->message(), 422);
+            return $this->sendSMS($newUser);
         }
     }
 
@@ -116,21 +107,14 @@ class RegistrationController extends AbstractController
      */
     public function sendSMS($user): JsonResponse
     {
-        $sms = $this->authyApi->requestSms($user->getAuthyId(), ['force' => true]);
+        $this->get('session')->set('user', $user);
 
-        if ($sms->ok()) {
-            $this->get('session')->set('user', $user);
-
-            return $this->json([
-                'data' => [
-                    'phone' => $user->getPhone()
-                ],
-                'Cookie' => 'PHPSESSID=' . session_id()
-            ], 200);
-        }
-
-        return $this->json($sms->message(), 400);
-
+        return $this->json([
+            'data' => [
+                'phone' => $user->getPhone()
+            ],
+            'Cookie' => 'PHPSESSID=' . session_id()
+        ], 200);
     }
 
     /**
@@ -173,22 +157,19 @@ class RegistrationController extends AbstractController
         }
 
         if($data) {
-            $verification = $this->authyApi->verifyToken($data->getAuthyId(), $dataRequest['verify_code']);
-            if ($verification->ok()) {
-                $user = $userRepository->findOneBy(['phone' => $data->getPhone()]) ?? $data;
+            $user = $userRepository->findOneBy(['phone' => $data->getPhone()]) ?? $data;
 
-                # Create new API key (token)
-                $token = bin2hex(random_bytes(16));
-                $user->setApiToken($token);
-                $user->setLastLogin(new DateTime(date('Y-m-d H:i:00')));
-                $user->setTimezone($dataRequest['timezone']);
-                $em->persist($user);
-                $em->flush();
+            # Create new API key (token)
+            $token = bin2hex(random_bytes(16));
+            $user->setApiToken($token);
+            $user->setLastLogin(new DateTime(date('Y-m-d H:i:00')));
+            $user->setTimezone($dataRequest['timezone']);
+            $em->persist($user);
+            $em->flush();
 
-                return $this->json($user->getApiToken(), 200);
-            }
+            return $this->json($user->getApiToken(), 200);
         }
 
-        return $this->json(['error' => !empty($data) ? $verification->message() : 'Incorrect PHPSESSID'], 422);
+        return $this->json(['error' => !empty($data) ? 'Invalid Request' : 'Incorrect PHPSESSID'], 422);
     }
 }
