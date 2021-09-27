@@ -2,127 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="54701224-65f8-43e0-b5ee-b852ee1df03b" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/tapmatch.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/tapmatch.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Controller/RegistrationController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/RegistrationController.php" afterDir="false" />
     </list>
-    <ignored path="$PROJECT_DIR$/vendor/api-platform/api-pack/" />
-    <ignored path="$PROJECT_DIR$/vendor/api-platform/core/" />
-    <ignored path="$PROJECT_DIR$/vendor/authy/php/" />
-    <ignored path="$PROJECT_DIR$/vendor/composer/" />
-    <ignored path="$PROJECT_DIR$/vendor/doctrine/annotations/" />
-    <ignored path="$PROJECT_DIR$/vendor/doctrine/cache/" />
-    <ignored path="$PROJECT_DIR$/vendor/doctrine/collections/" />
-    <ignored path="$PROJECT_DIR$/vendor/doctrine/common/" />
-    <ignored path="$PROJECT_DIR$/vendor/doctrine/data-fixtures/" />
-    <ignored path="$PROJECT_DIR$/vendor/doctrine/dbal/" />
-    <ignored path="$PROJECT_DIR$/vendor/doctrine/doctrine-bundle/" />
-    <ignored path="$PROJECT_DIR$/vendor/doctrine/doctrine-fixtures-bundle/" />
-    <ignored path="$PROJECT_DIR$/vendor/doctrine/doctrine-migrations-bundle/" />
-    <ignored path="$PROJECT_DIR$/vendor/doctrine/event-manager/" />
-    <ignored path="$PROJECT_DIR$/vendor/doctrine/inflector/" />
-    <ignored path="$PROJECT_DIR$/vendor/doctrine/instantiator/" />
-    <ignored path="$PROJECT_DIR$/vendor/doctrine/lexer/" />
-    <ignored path="$PROJECT_DIR$/vendor/doctrine/migrations/" />
-    <ignored path="$PROJECT_DIR$/vendor/doctrine/orm/" />
-    <ignored path="$PROJECT_DIR$/vendor/doctrine/persistence/" />
-    <ignored path="$PROJECT_DIR$/vendor/doctrine/sql-formatter/" />
-    <ignored path="$PROJECT_DIR$/vendor/egulias/email-validator/" />
-    <ignored path="$PROJECT_DIR$/vendor/fig/link-util/" />
-    <ignored path="$PROJECT_DIR$/vendor/guzzlehttp/guzzle/" />
-    <ignored path="$PROJECT_DIR$/vendor/guzzlehttp/promises/" />
-    <ignored path="$PROJECT_DIR$/vendor/guzzlehttp/psr7/" />
-    <ignored path="$PROJECT_DIR$/vendor/jms/metadata/" />
-    <ignored path="$PROJECT_DIR$/vendor/jms/serializer/" />
-    <ignored path="$PROJECT_DIR$/vendor/laminas/laminas-code/" />
-    <ignored path="$PROJECT_DIR$/vendor/laminas/laminas-eventmanager/" />
-    <ignored path="$PROJECT_DIR$/vendor/laminas/laminas-zendframework-bridge/" />
-    <ignored path="$PROJECT_DIR$/vendor/monolog/monolog/" />
-    <ignored path="$PROJECT_DIR$/vendor/nelmio/cors-bundle/" />
-    <ignored path="$PROJECT_DIR$/vendor/nikic/php-parser/" />
-    <ignored path="$PROJECT_DIR$/vendor/ocramius/proxy-manager/" />
-    <ignored path="$PROJECT_DIR$/vendor/phpdocumentor/reflection-common/" />
-    <ignored path="$PROJECT_DIR$/vendor/phpdocumentor/reflection-docblock/" />
-    <ignored path="$PROJECT_DIR$/vendor/phpdocumentor/type-resolver/" />
-    <ignored path="$PROJECT_DIR$/vendor/psr/cache/" />
-    <ignored path="$PROJECT_DIR$/vendor/psr/container/" />
-    <ignored path="$PROJECT_DIR$/vendor/psr/http-message/" />
-    <ignored path="$PROJECT_DIR$/vendor/psr/link/" />
-    <ignored path="$PROJECT_DIR$/vendor/psr/log/" />
-    <ignored path="$PROJECT_DIR$/vendor/ralouphie/getallheaders/" />
-    <ignored path="$PROJECT_DIR$/vendor/sensio/framework-extra-bundle/" />
-    <ignored path="$PROJECT_DIR$/vendor/symfony/asset/" />
-    <ignored path="$PROJECT_DIR$/vendor/symfony/browser-kit/" />
-    <ignored path="$PROJECT_DIR$/vendor/symfony/cache/" />
-    <ignored path="$PROJECT_DIR$/vendor/symfony/cache-contracts/" />
-    <ignored path="$PROJECT_DIR$/vendor/symfony/config/" />
-    <ignored path="$PROJECT_DIR$/vendor/symfony/console/" />
-    <ignored path="$PROJECT_DIR$/vendor/symfony/css-selector/" />
-    <ignored path="$PROJECT_DIR$/vendor/symfony/debug/" />
-    <ignored path="$PROJECT_DIR$/vendor/symfony/debug-bundle/" />
-    <ignored path="$PROJECT_DIR$/vendor/symfony/dependency-injection/" />
-    <ignored path="$PROJECT_DIR$/vendor/symfony/doctrine-bridge/" />
-    <ignored path="$PROJECT_DIR$/vendor/symfony/dom-crawler/" />
-    <ignored path="$PROJECT_DIR$/vendor/symfony/dotenv/" />
-    <ignored path="$PROJECT_DIR$/vendor/symfony/error-handler/" />
-    <ignored path="$PROJECT_DIR$/vendor/symfony/event-dispatcher/" />
-    <ignored path="$PROJECT_DIR$/vendor/symfony/event-dispatcher-contracts/" />
-    <ignored path="$PROJECT_DIR$/vendor/symfony/expression-language/" />
-    <ignored path="$PROJECT_DIR$/vendor/symfony/filesystem/" />
-    <ignored path="$PROJECT_DIR$/vendor/symfony/finder/" />
-    <ignored path="$PROJECT_DIR$/vendor/symfony/flex/" />
-    <ignored path="$PROJECT_DIR$/vendor/symfony/form/" />
-    <ignored path="$PROJECT_DIR$/vendor/symfony/framework-bundle/" />
-    <ignored path="$PROJECT_DIR$/vendor/symfony/http-client/" />
-    <ignored path="$PROJECT_DIR$/vendor/symfony/http-client-contracts/" />
-    <ignored path="$PROJECT_DIR$/vendor/symfony/http-foundation/" />
-    <ignored path="$PROJECT_DIR$/vendor/symfony/http-kernel/" />
-    <ignored path="$PROJECT_DIR$/vendor/symfony/inflector/" />
-    <ignored path="$PROJECT_DIR$/vendor/symfony/intl/" />
-    <ignored path="$PROJECT_DIR$/vendor/symfony/mailer/" />
-    <ignored path="$PROJECT_DIR$/vendor/symfony/maker-bundle/" />
-    <ignored path="$PROJECT_DIR$/vendor/symfony/mime/" />
-    <ignored path="$PROJECT_DIR$/vendor/symfony/monolog-bridge/" />
-    <ignored path="$PROJECT_DIR$/vendor/symfony/monolog-bundle/" />
-    <ignored path="$PROJECT_DIR$/vendor/symfony/options-resolver/" />
-    <ignored path="$PROJECT_DIR$/vendor/symfony/orm-pack/" />
-    <ignored path="$PROJECT_DIR$/vendor/symfony/phpunit-bridge/" />
-    <ignored path="$PROJECT_DIR$/vendor/symfony/polyfill-intl-icu/" />
-    <ignored path="$PROJECT_DIR$/vendor/symfony/polyfill-intl-idn/" />
-    <ignored path="$PROJECT_DIR$/vendor/symfony/polyfill-intl-normalizer/" />
-    <ignored path="$PROJECT_DIR$/vendor/symfony/polyfill-mbstring/" />
-    <ignored path="$PROJECT_DIR$/vendor/symfony/polyfill-php72/" />
-    <ignored path="$PROJECT_DIR$/vendor/symfony/polyfill-php73/" />
-    <ignored path="$PROJECT_DIR$/vendor/symfony/polyfill-php80/" />
-    <ignored path="$PROJECT_DIR$/vendor/symfony/process/" />
-    <ignored path="$PROJECT_DIR$/vendor/symfony/property-access/" />
-    <ignored path="$PROJECT_DIR$/vendor/symfony/property-info/" />
-    <ignored path="$PROJECT_DIR$/vendor/symfony/routing/" />
-    <ignored path="$PROJECT_DIR$/vendor/symfony/security-bundle/" />
-    <ignored path="$PROJECT_DIR$/vendor/symfony/security-core/" />
-    <ignored path="$PROJECT_DIR$/vendor/symfony/security-csrf/" />
-    <ignored path="$PROJECT_DIR$/vendor/symfony/security-guard/" />
-    <ignored path="$PROJECT_DIR$/vendor/symfony/security-http/" />
-    <ignored path="$PROJECT_DIR$/vendor/symfony/serializer/" />
-    <ignored path="$PROJECT_DIR$/vendor/symfony/serializer-pack/" />
-    <ignored path="$PROJECT_DIR$/vendor/symfony/service-contracts/" />
-    <ignored path="$PROJECT_DIR$/vendor/symfony/stopwatch/" />
-    <ignored path="$PROJECT_DIR$/vendor/symfony/translation/" />
-    <ignored path="$PROJECT_DIR$/vendor/symfony/translation-contracts/" />
-    <ignored path="$PROJECT_DIR$/vendor/symfony/twig-bridge/" />
-    <ignored path="$PROJECT_DIR$/vendor/symfony/twig-bundle/" />
-    <ignored path="$PROJECT_DIR$/vendor/symfony/validator/" />
-    <ignored path="$PROJECT_DIR$/vendor/symfony/var-dumper/" />
-    <ignored path="$PROJECT_DIR$/vendor/symfony/var-exporter/" />
-    <ignored path="$PROJECT_DIR$/vendor/symfony/web-link/" />
-    <ignored path="$PROJECT_DIR$/vendor/symfony/web-profiler-bundle/" />
-    <ignored path="$PROJECT_DIR$/vendor/symfony/web-server-bundle/" />
-    <ignored path="$PROJECT_DIR$/vendor/symfony/yaml/" />
-    <ignored path="$PROJECT_DIR$/vendor/twig/extra-bundle/" />
-    <ignored path="$PROJECT_DIR$/vendor/twig/twig/" />
-    <ignored path="$PROJECT_DIR$/vendor/twilio/sdk/" />
-    <ignored path="$PROJECT_DIR$/vendor/webimpress/safe-writer/" />
-    <ignored path="$PROJECT_DIR$/vendor/webmozart/assert/" />
-    <ignored path="$PROJECT_DIR$/vendor/willdurand/negotiation/" />
-    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -130,71 +13,12 @@
   </component>
   <component name="ComposerSettings" doNotAsk="true" synchronizationState="SYNCHRONIZE">
     <pharConfigPath>$PROJECT_DIR$/composer.json</pharConfigPath>
-    <executablePath>composer</executablePath>
+    <execution>
+      <executable path="composer" />
+    </execution>
   </component>
   <component name="FavoritesManager">
     <favorites_list name="tapmatch-back-end" />
-  </component>
-  <component name="FileEditorManager">
-    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/Entity/Event.php">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1746">
-              <caret line="107" column="28" selection-start-line="107" selection-start-column="28" selection-end-line="107" selection-end-column="28" />
-              <folding>
-                <element signature="e#30#65#0#PHP" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/Controller/EventController.php">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1394">
-              <caret line="94" column="30" selection-start-line="94" selection-start-column="30" selection-end-line="94" selection-end-column="30" />
-              <folding>
-                <element signature="e#34#59#0#PHP" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/Controller/CommunityController.php">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="357">
-              <caret line="117" column="20" selection-start-line="117" selection-start-column="20" selection-end-line="117" selection-end-column="20" />
-              <folding>
-                <element signature="e#34#59#0#PHP" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/Controller/RegistrationController.php">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2550">
-              <caret line="161" column="40" selection-start-line="161" selection-start-column="40" selection-end-line="161" selection-end-column="40" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/Serializer/Normalizer/UserNormalizer.php">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="340">
-              <caret line="25" column="16" selection-start-line="25" selection-start-column="16" selection-end-line="25" selection-end-column="16" />
-              <folding>
-                <element signature="e#45#70#0#PHP" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-    </leaf>
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
@@ -462,25 +286,13 @@
       <recent name="$PROJECT_DIR$/public" />
     </key>
   </component>
-  <component name="RunDashboard">
-    <option name="ruleStates">
-      <list>
-        <RuleState>
-          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
-        </RuleState>
-        <RuleState>
-          <option name="name" value="StatusDashboardGroupingRule" />
-        </RuleState>
-      </list>
-    </option>
-  </component>
   <component name="RunManager">
     <configuration name="phpunit.xml.dist" type="PHPUnitRunConfigurationType" factoryName="PHPUnit">
       <TestRunner scope="XML" />
       <method v="2" />
     </configuration>
   </component>
-  <component name="SpellCheckerSettings" BundledDictionaries="0" Folders="0" CustomDictionaries="0" Dictionaries="0" CorrectionsLimit="5" DefaultDictionary="application-level" UseSingleDictionary="true" />
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="SvnConfiguration">
     <configuration />
   </component>
@@ -545,6 +357,11 @@
       <workItem from="1610877960023" duration="61000" />
       <workItem from="1610981354446" duration="636000" />
       <workItem from="1611215394436" duration="651000" />
+      <workItem from="1630473612940" duration="808000" />
+      <workItem from="1632644125953" duration="945000" />
+      <workItem from="1632729365814" duration="2373000" />
+      <workItem from="1632733819408" duration="407000" />
+      <workItem from="1632734529017" duration="170000" />
     </task>
     <servers />
   </component>
@@ -599,7 +416,7 @@
     </layout-to-restore>
   </component>
   <component name="TypeScriptGeneratedFilesManager">
-    <option name="version" value="1" />
+    <option name="version" value="3" />
   </component>
   <component name="Vcs.Log.History.Properties">
     <option name="COLUMN_ORDER">
@@ -610,6 +427,18 @@
         <option value="1" />
       </list>
     </option>
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/vendor/jms/serializer/src/SerializationContext.php" />
